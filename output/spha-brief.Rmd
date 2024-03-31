@@ -1,0 +1,201 @@
+---
+title: "SPHA training"
+output: html_notebook
+date: "`r Sys.Date()`"
+author: "Julian Flowers"
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Brief
+
+1.  Working with Simon to design training materials for two the following topics:
+
+    a.  Acting on data (Principles) & Open-Source data
+
+    b.  Data visualisation and Insight generation
+
+ 
+
+2.  We also would like your support with the Proof of Concept (see attached), for this we envisage you supporting us with reviewing the dataset and advising on the best methodology approaches to take with regards to conducting data analysis and reporting.
+
+ 
+
+**Next steps:**
+
+1.  Please can you liaise with Simon and come up with the number of days for the training work?
+
+2.  With regards to the PHOF work we estimate this will take about 5 days of your time in total – if this is more, we can review once the project has kicked off and increase the days.
+
+3.  I will be in touch separately to discuss contracting arrangements with IQVIA.
+
+ 
+
+## Open data
+
+<https://www.go-fair.org/fair-principles/>
+
+**F**indable
+
+-   Metadata is better data
+
+    -   Rich
+
+    -   Indexed
+
+    -   Registered
+
+    -   Built on open metadata standards
+
+    -   Searchable, discoverable, platform independent
+
+-   FAIRification
+
+**A**ccessible
+
+-   Free and open comms protocol
+
+-   Open authentication
+
+-   Metadata persistence
+
+**I**nteroperable
+
+-   Open knowledge representation standards
+
+-   Open vocabularies
+
+**R**eusable
+
+-   Releases
+
+-   Licensing
+
+-   Provenance
+
+![](https://www.go-fair.org/wp-content/uploads/2017/11/FAIRificationProcess-1.png)
+
+## Data infrastructure
+
+APIs
+
+JSON
+
+Database architecture
+
+Fingertips data model as an example
+
+## Performance
+
+Direction
+
+Desirability
+
+Magnitude
+
+Always comparative
+
+-   Baseline
+
+-   Target
+
+-   General trend
+
+-   Defined standards / expectation
+
+-   Expected values (models)
+
+-   Outlier or out of control
+
+## Insight
+
+## **Actionable data**
+
+SPC - statistical
+
+Limits
+
+How are we doing?
+
+Timeliness
+
+Forecasts
+
+Models
+
+Causal pathways
+
+-   Do we have actions we can take?
+
+    -   Review
+
+    -   Policy
+
+    -   Practice
+
+    -   Incentives / disincentives
+
+    -   Services
+
+    -   Engagement
+
+        -   Professionals
+
+        -   Public
+
+    -   Timescales
+
+        -   When can we do it?
+
+        -   How long will it take to show effect?
+
+        -   How will we know if its working
+
+    -   Trends
+
+    -   Time series analyses and models
+
+PHOF
+
+Highly multivariate
+
+Population groups x indicators
+
+Multivatariate analyses (unsupervised) =\> clustering; ordination
+
+Ordination
+
+-   PCA
+
+-   UMAP / tSNE
+
+-   CCA / ICA
+
+-   NMDS
+
+-   FA
+
+## Population health strategies
+
+Population vs targetted
+
+```{r}
+needs(tidyverse)
+x <- seq(-5, 5, by = 0.1)
+dnorm(x, 0, 1) |>
+    data.frame() |>
+    mutate(index = row_number()) |>
+    mutate(s2 = dnorm(x, 1.1, 1.1)) |>
+    ggplot(aes(index, dnorm.x..0..1.)) +
+    geom_area() +
+    geom_area(aes(index, s2), fill = "blue", alpha = 0.3) +
+    geom_vline(xintercept = 75, colour = "red") +
+    theme_bw() +
+    theme(axis.text = element_blank(), 
+          axis.ticks= element_blank(), 
+          panel.background = element_rect()) +
+    labs(x = "", 
+         y = "")
+
+
+```
