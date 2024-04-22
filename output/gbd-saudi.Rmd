@@ -1,0 +1,203 @@
+---
+title: "Exercise"
+author: "Julian Flowers"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    toc: true
+  word_document:
+    toc: true
+  html_document:
+    code_folding: hide
+    toc: true
+subtitle: Analysis of Global Burden of Disease (GBD) data for Saudi Arabia
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE)
+path <- here::here("data/john-snow-data-master")
+
+```
+
+## Introduction
+
+In this exercise we will use data from the Global Burden of disease to explore trends in exposures and health outcomes in Saudi Arabia
+
+In this exercise we will be using R and Tableau Public online to analyse and visualise the data. The source data is available [here](https://github.com/julianflowers/spha/blob/main/IHME-GBD_2019_DATA-8eea0314-1.csv).
+
+## Get started
+
+First we need to load the R packages for analysis.
+
+```{r, echo=TRUE}
+
+needs(tidyverse)
+
+```
+
+Now we load the data.
+
+## Get the data
+
+The code segment below shows how data is loaded.
+
+```{r, echo=TRUE}
+
+gbd <- read_csv("https://github.com/julianflowers/spha/blob/main/IHME-GBD_2019_DATA-a5616352-1.csv?raw=TRUE") |>
+    filter(str_detect(rei_name, "Tobacco|Alcohol|Air|Env|Occupational|Dietary|Low"))
+
+```
+
+
+## Exploring the data
+
+There are numerous ways of exploring data in R. A first step is to review the variables in the dataset.
+
+```{r glimpse}
+
+glimpse(gbd)
+
+```
+
+The dataset consists a series of metrics for Saudi Arabia from the GBD Compare dataset for age ,sex, cause (level 3) and risk factor (level 3) by year. The dataset has `r nrow(gbd)` records. The available metrics are `r gbd$measure_name |> unique()`. For this analysis we will focus on Disability Adjusted Life Years (DALYs) rate, which is a summary measure of population health.
+
+The causes included are `r gbd$cause_name |> unique() |> tibble::enframe()  |> dplyr::rename(id = name, name = value) |> knitr::kable()`.
+
+The risk factors (exposures) included are `r gbd$rei_name |> unique() |> tibble::enframe()  |> dplyr::rename(id = name, name = value) |> knitr::kable()`.
+
+The data is all age, persons values.
+
+## 5 number summaries
+
+We can create 5-number summaries of for each cause and exposure.
+
+```{r}
+
+options(digits = 1, scipen = 999)
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate")) |>
+    group_by(cause_name, rei_name, age_name, sex_name) |>
+    reframe(mean = mean(val), 
+            q = list(quantile(val, c(0, .25, .5, .75, 1)))) |>
+    unnest_wider(q) |>
+    head() |>
+    knitr::kable()
+    
+
+```
+
+## Visualisation
+
+One way of presenting mutlidimensional data is to present each dimension separatly. In visualisation, this is known as **faceting**. This is shown in the code below.
+
+```{r trends}
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate")) |>
+    ggplot() +
+    geom_line(aes(year, val, colour = rei_name)) +
+    facet_wrap(~ cause_name)
+
+```
+
+Qn: How can this chart be improved?
+
+There are a number of problems with this initial visualsation.
+
+* The different scales of the data masks trends in mamy of the cause.
+* The cause names are too long
+
+We can modify the scaling so each chart is scaled separately as below.
+
+```{r}
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate")) |>
+    ggplot() +
+    geom_line(aes(year, val, colour = rei_name)) +
+    facet_wrap(~ cause_name, scales = "free") +
+    theme(legend.text = element_text(size = 7), 
+          axis.text = element_text(size = 7))
+
+```
+
+We can simplify further by filtering out causes where DALYs exceed a threshold - lets use DALYs > 50.
+
+```{r}
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate"), val > 50) |>
+    ggplot() +
+    geom_line(aes(year, val, colour = rei_name)) +
+    facet_wrap(~ cause_name, scales = "free") +
+    ggthemes::theme_base() +
+    theme(legend.text = element_text(size = 7), 
+          axis.text = element_text(size = 7), 
+          strip.text = element_text(size = 7))
+
+```
+
+This provides greater clarity of trends in burden of disease by cause, stratified by underlying risk factors. 
+
+Qn:What trends do you see?
+
+## Risk factors
+
+Rather than stratifying by risk, we can plot risk stratified by disease. This only requires a minor change in the code.
+
+```{r}
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate"), val > 50) |>
+    ggplot() +
+    geom_line(aes(year, val, colour = cause_name)) +
+    facet_wrap(~ rei_name, scales = "free") +
+    ggthemes::theme_base() +
+    scale_colour_viridis_d(option = "turbo", direction = -1) +
+    theme(legend.text = element_text(size = 7),
+          axis.text = element_text(size = 7), 
+          strip.text = element_text(size = 7))
+
+```
+
+This is a more complex picture but highlights the pattern of attributable risk of exposures. For example,  a growing contribution of air pollution to ischaemic heart disease. 
+
+Qn: What other trends emerge?
+
+## Further improvements
+
+One disadvantage of scaling each cause separately is that we cannot generate inter-cause comparison.
+
+Qn: Why might this be useful? How might it be achieved?
+
+
+## Advanced
+
+
+```{r}
+
+## to compare trends between causes we can index values to a baseline. 
+## In this case trends start at 1990 so we could use this
+## 
+## We need to calculate a new plotting value as the ratio of each years value by cause and risk to the value in 1990...
+
+gbd |>
+    filter(measure_id == 2, str_detect(location_name, "Saudi"), str_detect(metric_name, "Rate"), val > 50) |> 
+    group_by(cause_name, rei_name) |>    ## need a value for each cause-risk category
+    mutate(val1 = val / val[1] ) |>      ## calculates relative rate for each year
+    ggplot() +
+    geom_line(aes(year, val1, colour = cause_name)) +
+    geom_hline(yintercept = 1) +
+    facet_wrap(~ rei_name) +
+    ggthemes::theme_base() +
+    scale_colour_viridis_d(option = "turbo", direction = -1) +
+    theme(legend.text = element_text(size = 7),
+          axis.text = element_text(size = 7), 
+          strip.text = element_text(size = 7))
+ 
+```
+
+
+
