@@ -3,14 +3,18 @@ title: "Exercise"
 author: "Julian Flowers"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    toc: true
   word_document:
+    toc: true
+    fig_caption: true
+    fig_height: 8
+    fig_width: 6
+  pdf_document:
     toc: true
   html_document:
     code_folding: hide
     toc: true
-subtitle: "Preparing diabetes data for modelling"
+subtitle: "Drawing inference and insight from diabetes data"
+bibliography: references.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -18,46 +22,67 @@ subtitle: "Preparing diabetes data for modelling"
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE)
 path <- here::here("data/")
 
+options(digits = 2)
+
 ```
 
 ## Introduction
 
 In this exercise we will be using data from the English Public Health Outcomes Framework (PHOF). We will be downloading data from source and the exercise is to test the relationship between diabetes care processes and outcome.
 
-To do this we will be performing supervised analysis of diabetes data from the PHOF - constructing linear models with diabetes outcome as the dependent variable and care processes and the independent (predictor) variables. To allow for diabetes frequency we will also include diabetes prevalence in our models, as well as a summary measure of socio-economic status (SES). In England, the Index of Multiple Deprivation 2019 (IMD) is widely used as a summary SES index. 
+To do this we will be performing supervised analysis of diabetes data from the PHOF - constructing linear models with diabetes outcome as the dependent variable and care processes and the independent (predictor) variables. To allow for diabetes frequency we will also include diabetes prevalence in our models, as well as a summary measure of socio-economic status (SES). In England, the Index of Multiple Deprivation 2019 (IMD) is widely used as a summary SES index.
 
-We will be analysing the data for sub-national health administrative units called sub-ICBs (SICB). England is subdivided into 106 SICBs  - these are the units of health care planning and performance. 
-
-Thesae data can be obtained directly from the 
+We will be analysing the data for sub-national health administrative units called sub-ICBs (SICB). England is subdivided into 104 SICBs - these are the units of health care planning and performance.
 
 ## Get started
 
 First we need to load the R packages we need to extract data and for analysis.
 
-```{r, echo=TRUE}
+```{r load packages, echo=TRUE}
 
-needs(tidyverse, pak, tidymodels, mgcv, glmnet, corrplot)
+needs(tidyverse, pak, tidymodels, mgcv, glmnet, corrplot, factoextra, FactoMineR, umap, dbscan, broom, cluster, fpc)
 
 ```
 
 ## Get the data
 
-Now we load the diabetes data. In the PHOF, these data have a ProfileID of 139 and SICBs have an  AreaTypeID of 66. The code segment below shows how data is loaded.
+Now we load the diabetes data. he code segment below shows how data is loaded.
 
-```{r, echo=TRUE}
+```{r load data, echo=TRUE}
 
-diabetes_model <- read_csv("~/spha/data/dm_model_data.csv", show_col_types = FALSE)
-diabetes_codebook <- read_csv("~/spha/data/dmmod_codebook.csv", show_col_types = FALSE)
+diabetes_model <- read_csv("https://github.com/julianflowers/spha/blob/main/dm_model_data.csv?raw=TRUE", show_col_types = FALSE)
+diabetes_codebook <- read_csv("https://github.com/julianflowers/spha/blob/main/dmmod_codebook.csv?raw=TRUE", show_col_types = FALSE)
 
 ```
 
-The resulting dataset has `r nrow(diabetes_model)` records, and consists of `r ncol(diabetes_model)-2` diabetes metrics. 
+The resulting dataset has `r nrow(diabetes_model)` records, and consists of `r ncol(diabetes_model)-2` diabetes metrics.
 
 ## Explore the data
 
+```{r classify_variables}
+### Population diabetes control
+
+diabetes_codebook <- diabetes_codebook |>
+    mutate(category = case_when(str_detect(ind, "aged|male|white|ethnic") ~ "demography",
+                                str_detect(ind, "rec|off|att") ~ "process", 
+                                str_detect(ind, "achieved") ~ "control", 
+                                str_detect(ind, "amp") ~ "outcome", 
+                                str_detect(ind, "depr") ~ "ses", 
+                                str_detect(ind, "area") ~ "area", 
+                                str_detect(ind, "prev") ~ "prev"
+                                )) 
+
+diabetes_codebook <- diabetes_codebook |>
+    mutate(short_name = str_remove(ind, "people_with_type_2_diabetes_"), 
+           short_name = str_remove(short_name, "_persons_"))
+
+
+```
+
+
 The first step is explore relationships between variables. A common way to do this is to construct a correlation matrix or a correlogram. In R, the `corrplot` package is widely used for this.
 
-```{r}
+```{r corrplot}
 
 ## Because the variable names are long we'll replace them a single character for labelling charts
 colnames(diabetes_model) <- diabetes_codebook$code
@@ -67,10 +92,329 @@ diabetes_model |>
     
     select(-last_col()) |>    ## keep numeric columns
     cor() |>              ## calculate r values (Pearson correlation coefficients)
-    corrplot::corrplot(order = "hclust", addrect = 10, method = "square", tl.col = "black", tl.cex = .5) ## we have orderded the variables using hierarchical clustering
+    corrplot::corrplot(order = "hclust", addrect = 10, method = "square", tl.col = "black", tl.cex = .5) ## we have ordered the variables using hierarchical clustering - there appear to be ~10 clusters
 
 
 
 ```
 
+## Cluster analysis
 
+The next step is to identify patterns in the data. We'll start with cluster analysis - this has two main forms - hierarchical and non-hierarchical. Hierarchical clustering creates a tree diagram (dendrogram)
+
+### Hierarchical clustering
+
+The groups areas which have similar patterns of indicator values
+
+```{r scale_model_data_cluster, fig.height=8}
+
+## scale and centre the data 
+diabetes_model_scaled <- diabetes_model |>
+    mutate_if(is.numeric, scale) |>
+    keep(is.numeric)
+
+rownames(diabetes_model_scaled) <- diabetes_model$ind_1
+
+areas <- diabetes_model |>
+    select(1:2)
+
+
+## create a distance matrix (Euclidean distances)
+hc_dm <-  diabetes_model_scaled |>
+    dist() |>
+    hclust()                              
+
+## Plot - tree leaves are labelled with area code
+factoextra::fviz_dend(hc_dm, k = 15, palette = "RdYlGn", repel = TRUE, cex = .5, horiz = TRUE) 
+ 
+
+```
+
+## Clustering algorithms
+
+A recent approach to identifying patterns in large multivariate datasets is to take a 2 step approach:
+
+1.  Dimensionality reduction - first collapse the data to 2 dimensions. There are several ways to do this including principal component analysis (PCA), Uniform Manifold Approximation and Projection (UMAP)[@Hozumi2021; @umap]. UMAP is increasingly used because it preserves small scale structure in the data and can emphasize clustering.
+2.  Then apply a clustering algorithm. DBSCAN is often used (@dbscan). This doesn't require pre-specified cluster number, but it is based on a nearest neighbour algorithm. The choice of nearest neighbour count (`minPts`) determines the number of clusters found by the algorithm.
+
+```{r umap_and_cluster, cache=TRUE}
+
+dm_um <- diabetes_model_scaled |>
+    umap::umap()
+    
+set.seed(123)
+
+dm_clust <- dm_um$layout |>
+    data.frame() |>
+    dbscan::hdbscan(minPts = 3)
+
+dm_clust_1 <- dm_clust$cluster |>
+    cbind(dm_um$layout) |>
+    data.frame() 
+
+dm_silhouette <- silhouette(dm_clust_1$X1, dist(diabetes_model_scaled))
+
+dm_clust_1 |>
+    ggplot() +
+    geom_point(aes(X3, X2, colour = factor(X1))) +
+    stat_ellipse(aes(X3, X2, colour = factor(X1)), data = dm_clust_1 |> filter(X1 != 0)) +
+    ggthemes::theme_base() +
+    scale_color_viridis_d(option = "turbo") +
+    labs(title = "Clustering of SICBs based on diabetes indicators", 
+         x = "UMAP 1", 
+         y = "UMAP 2")
+
+```
+
+## Cluster features
+
+Next, we can review how the clusters differ in terms of diabetes indicators.
+
+```{r cluster_features}
+
+dm_clust_1 <- dm_clust_1 |>
+    rownames_to_column("area")
+
+## add cluster allocation to original data
+dm_clusters <- diabetes_model |>
+    left_join(dm_clust_1, by = c("ind_1" = "area")) 
+
+## calculate mean values for each cluster
+
+dm_cluster_means <- dm_clusters |>
+    select(-ind_1) |>
+    group_by(X1) |>
+    mutate_if(is.numeric, scale) |>
+    summarise(across(2:last_col(), mean, na.rm = TRUE)) |>
+    pivot_longer(cols = -X1, names_to = "ind", values_to = "mean") 
+
+dm_cluster_means |>
+    filter(X1 != 6) |>
+    ggplot(aes(ind, factor(X1), fill = mean)) +
+    geom_tile() +
+    ggthemes::theme_base() +
+    labs(title = "Mean values of diabetes indicators by cluster", 
+         y = "Cluster", 
+         x = "Indicator") +
+    theme(axis.text = element_text(size = 7, angle = 90, hjust = 1), 
+          legend.position = "bottom") +
+    scale_fill_distiller(palette = "RdYlBu") +
+    scale_x_discrete(position = "top")
+
+
+```
+
+## Modelling diabetes control and outcome
+
+```{r outcomes_and_predictors}
+
+preds <- diabetes_codebook |>
+    filter(str_detect(category, "control|outcome|ses|prev")) |>
+    filter(str_detect(ind, "2019|2020")) 
+
+out <- diabetes_codebook |>
+    filter(str_detect(ind, "amp"))
+
+```
+
+
+### Population diabetes outcomes
+
+First we'll explore the relationship between diabetes outcome and diabetes control. We will use minor amputation rates as an outcome measure (Lower is better), and diabetes control metrics as predictors We'll use the most recent values of predictor variables (2020). The latest year for amputation rates is 2018.
+
+#### Linear model
+
+```{r linear_model}
+
+## Population outcomes - minor amputation rates
+
+dm_out <- lm(ind_85 ~ ind_59 + ind_62 + ind_65 + ind_68 + ind_71 + ind_74 + ind_77 + ind_80 + ind_84 + ind_81, data = diabetes_model)
+
+dm_out |>
+    gtsummary::tbl_regression() |>
+    gtsummary::add_glance_source_note()
+
+
+```
+
+Simple linear regression suggests that the proportion of the population achieving all 3 treatment targets is inversely associated with lower minor amputation rates. It is positively associated with tight blood pressure control and tight diabetes control. The model explains `r 100 * summary(dm_out)$r.squared`% of the variance in minor amputation rates. The root mean squared error is `r sqrt(mean(residuals(dm_out)^2))`.
+
+#### Non-linear model
+
+We can extend our inferential model to include non-linear relationships. We can use the `mgcv` package to fit a generalised additive model (GAM) to the data. This allows us to model non-linear relationships between the dependent and independent variables.
+
+```{r generalised_additive_model}
+
+dm_out_gam <- gam(ind_85 ~ s(ind_59) + s(ind_62) + s(ind_65) + s(ind_68) + s(ind_71) + s(ind_74) + s(ind_77) + s(ind_80) + s(ind_84) + s(ind_81), data = diabetes_model)
+
+dm_out_gam |>
+    gtsummary::tbl_regression() |>
+    gtsummary::add_glance_source_note()
+
+dm_out_gam |>
+    summary()
+
+
+
+```
+
+This shows 4 variables, blood pressure control, diabetes control, cholesterol control and HbA1c control are non-linearly associated with minor amputation rates. The model explains 55% of the variance in minor amputation rates. The root mean squared error is `r sqrt(mean(residuals(dm_out_gam)^2))` - the model is a better fit than the linear version
+
+
+We can plot the relationship between the predictors and the outcome to visualise the non-linear relationships.
+
+```{r gam_plot, fig.cap="Plot of GAM model of diabetes control and minor amputation rates"}
+
+plot(dm_out_gam, pages = 1, shade = TRUE, residuals = TRUE, pch = 16, cex = .5)
+
+
+```
+
+This confirms the lack of relationship with ind_77, ind_80 and ind_65, inverse linear relationships with ind_59 and ind_68, and positive relationship with ind_62 and ind_71. The other predictors show a weak non-linear relationship with minor amputation rates.
+
+Decoding these relationships, we learn that the proportion of the diabetic population achieving treatment targets is inversely associated with minor amputation rates - this is encouraging as it suggests that better control of diabetes is associated with lower rates of minor amputations. The relationship is linear, with the lowest minor amputation rates seen at the highest levels of diabetes control, and suggests a target for further reduction in amputation rates by increasing the percentage controlled (currently below 44%), and reducing the variation between areas.
+
+Somewhat paradoxically, individual treatment targets - ind_62 (cholesterol control) and ind_71 (blood pressure control) are positively associated with minor amputation rates, suggesting that 
+
+
+The proportion of the population achieving all 3 treatment targets is a measure of population treatment control. We'll use the most recent value (ind_59) as the dependent variable, and the most recent values of predictor variables (2020).
+
+```{r predictors}
+
+pred_inds <- diabetes_codebook |>
+    filter(str_detect(category, "process|ses|demog|prev"), 
+           str_detect(ind, "2020")) |>
+    pluck("code")
+
+mod_df <-  diabetes_model |>
+    select(ind_59, all_of(pred_inds))
+
+```
+
+To further explore the relationship between achieving all 3 treatment targets and the predictors we can use a linear model. Initially we will fit all predictors (process, demography and prevalence estimates).
+
+```{r linear_process_model}
+
+## linear model
+## 
+mod1 <- lm(ind_59 ~ ., data = mod_df)
+
+## goodness of fit
+## 
+mod_df_pred <- augment(mod1, mod_df)
+
+mod_df_pred |>
+    ggplot() +
+    geom_point(aes(.fitted, ind_59)) +
+    geom_smooth(aes(.fitted, ind_59), method = "lm", se = FALSE) +
+    geom_abline(aes(intercept = 0, slope = 1), linetype = 2) +
+    ggthemes::theme_base() +
+    labs(title = "Predcited % of population achieving all 3 treatment targets", 
+         x = "Fitted values", 
+         y = "Observed values") +
+    theme(plot.title.position = "plot")
+
+```
+
+The chart shows a linear model is a moderate fit with an r squared value is `r summary(mod1)$r.squared`. There is residual variation - the root mean squared error is `r (mod_df_pred$.fitted - mod_df_pred$ind_59)^2 |> mean() |> sqrt()` is 2.1. This means our model predicts the proportion of the population achieving all 3 treatment targets within 2.1% of the observed value.
+
+With a large number of predictors, model selection (i.e. best fit choice of predictor variables) is important. We can use the `step` function to select the best model i.e. performance of the model with the fewest predictors. However, penalised regression is a more efficient technique. This automatically selects the best model by penalising the number of predictors. In R the `glmnet` package is widely used for this (@glmnet). It uses lasso regression to remove variables which contribute least to the model.
+
+```{r penalised_regression}
+
+## load the package
+needs(glmnet)
+
+## prepare the data
+### select outcome and predictors
+
+out <- mod_df$ind_59
+preds <- mod_df |> select(-ind_59) |> as.matrix()
+
+## fit the model using cross-validation
+cv_fit <- cv.glmnet(preds, out, alpha = 1, nfolds = 10)
+
+plot(cv_fit)
+
+## fit the model with the best lambda value
+best_model <- glmnet(mod_df |> select(-ind_59) |> as.matrix(), mod_df$ind_59, alpha = 1, lambda = cv_fit$lambda.min) 
+
+predict(best_model, newx = preds) |>
+    ggplot() +
+    geom_point(aes(s0, mod_df$ind_59)) +
+    geom_abline(aes(intercept = 0, slope = 1), linetype = 2) +
+    ggthemes::theme_base() +
+    labs(title = "Predicted vs observed values", 
+         x = "Observed values", 
+         y = "Predicted values") +
+    theme(plot.title.position = "plot")
+
+
+```
+
+The error of this model is `r (glmnet::predict.glmnet(best_model, newx = preds) |> as.matrix() |> data.frame() |> purrr::pluck("s0") - mod_df_pred$ind_59)^2 |> mean() |> sqrt()` - similar to the linear model
+
+## Plot regression coefficients
+
+```{r coeff_plot, fig.cap="Demographic, prevalence and care process predictors of population diabetes control"}
+
+## extract coefficients
+
+best_model$beta |>
+    as.matrix() |>
+    as.data.frame() |>
+    rownames_to_column("ind") |>
+    left_join(diabetes_codebook, by = c("ind" = "code")) |>
+    arrange(desc(s0)) |>
+    filter(s0 != 0) |>
+    mutate(short_name = str_remove(short_name, "(all_ages_2020|12_yrs_2020)"), 
+           short_name = str_remove(short_name, "_of"), 
+           short_name = str_remove(short_name, "_within_12_months.*")) |>
+    ggplot() +
+    geom_point(aes(s0, reorder(short_name, s0), colour = category)) +
+    geom_segment(aes(x = 0, xend = s0, y = short_name, yend = short_name), lty = "dotted") +
+    geom_vline(xintercept = 0, linetype = 2) +
+    labs(title = "Penalised regression coefficients", 
+         y = "Predictor", 
+         x = "Coefficient") +
+    ggthemes::theme_base() +
+    theme(axis.text.y = element_text(size = 7), 
+          plot.title.position = "plot", 
+          legend.position = "bottom")
+
+```
+
+
+## Annex
+
+**Algorithm of DBSCAN**
+
+The goal is to identify dense regions, which can be measured by the number of objects close to a given point.
+
+Two important parameters are required for **DBSCAN**: **epsilon** (“eps”) and **minimum points** (“MinPts”). The parameter **eps** defines the radius of neighbourhood around a point x. It’s called called the $\epsilon$-neighbourhood of x. The parameter **MinPts** is the minimum number of neighbours within “eps” radius.
+
+Any point x in the dataset, with a neighbour count greater than or equal to **MinPts**, is marked as a **core point**. We say that x is **border point**, if the number of its neighbours is less than MinPts, but it belongs to the $\epsilon$-neighbourhood of some core point z. Finally, if a point is neither a core nor a border point, then it is called a noise point or an outlier.
+
+The figure below shows the different types of points (core, border and outlier points) using **MinPts = 6**. Here x is a core point because $neighbours_\epsilon(x) = 6$, y is a border point because $neighbours_\epsilon(y) < MinPts$, but it belongs to the $\epsilon$-neighbourhood of the core point x. Finally, z is a noise point.
+
+![Density based clustering basic idea - minimal point and epsilon](http://www.sthda.com/sthda/RDoc/images/dbscan-principle.png)
+
+We define 3 terms, required for understanding the **DBSCAN algorithm**:
+
+-   **Direct density reachable**: A point “A” is **directly density reachable** from another point “B” if: i) “A” is in the $\epsilon$-neighbourhood of “B” and ii) “B” is a core point.
+
+-   **Density reachable**: A point “A” is **density reachable** from “B” if there are a set of core points leading from “B” to “A.
+
+-   **Density connected**: Two points “A” and “B” are **density connected** if there are a core point “C”, such that both “A” and “B” are **density reachable** from “C”.
+
+A **density-based cluster** is defined as a group of density connected points. The algorithm of density-based clustering (DBSCAN) works as follow:
+
+The algorithm of density-based clustering works as follow:
+
+1.  For each point $x_i$, compute the distance between $x_i$ and the other points. Finds all neighbour points within distance **eps** of the starting point ($x_i$). Each point, with a neighbour count greater than or equal to **MinPts**, is marked as **core point** or **visited**.
+
+2.  For each **core point**, if it’s not already assigned to a cluster, create a new cluster. Find recursively all its density connected points and assign them to the same cluster as the core point.
+
+3.  Iterate through the remaining unvisited points in the dataset.
+
+Those points that do not belong to any cluster are treated as outliers or noise
