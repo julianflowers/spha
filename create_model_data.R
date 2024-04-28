@@ -1,9 +1,12 @@
 ## prepare modelling data
-## 
+## for assessing relationship between amputation rates and diabetes care processes
 
+library(needs)
+devtools::install_github("ropensci/fingertipsR) ## r package to extact data from the PHOF (fingertips) API
 needs(fingertipsR, tidyverse)
 options(digits = 2)
 
+## Extract diabetes data for SICBs (area type 66)
 data <- fingertips_data(ProfileID = 139, AreaTypeID = 66)
 
 data |>
@@ -29,10 +32,11 @@ dim(dmmod)
 colnames(dmmod)
 
 ## impute missing data
-## 
+## with median values
 dmmod <- dmmod |>
     mutate_if(is.numeric, \(x) ifelse(is.na(x), median(x, na.rm = TRUE), x))
 
+## extract variable names and codes
 codebook <- data.frame(ind = colnames(dmmod), code = paste0("ind_", 1:length(colnames(dmmod))))
 
 dmmod |>
