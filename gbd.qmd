@@ -1,0 +1,125 @@
+---
+title: "DALYs"
+format: html
+editor: visual
+---
+
+## Load data
+
+```{r}
+#| label: load data
+
+needs(tidyverse, data.table, geomtextpath, RColorBrewer)
+
+gbd <- read_csv("~/spha/data/IHME-GBD_2019_DATA-8eea0314-1.csv", show_col_types = FALSE)
+gbd_risk <- fread("~/spha/data/IHME-GBD_2019_DATA-a5616352-1.csv")
+
+```
+
+```{r}
+#| label: explore data
+
+skimr::skim(gbd)
+
+## causes included
+gbd |>
+    reframe(Causes = list(unique(cause_name))) |>
+    unnest(Causes) |>
+    arrange(Causes) |>
+    DT::datatable()
+
+```
+
+## Model trends by disease
+
+```{r}
+#| label: trends
+
+top_20 <- gbd |>
+    filter(str_detect(measure_name, "DAL"), 
+           str_detect(location_name, "Sau"), 
+           str_detect(metric_name, "Rate")) |>
+    nest_by(cause_name) %>%
+    mutate(mod = list(lm(val ~ year,  data = data))) |>
+    reframe(broom::tidy(mod)) |>
+    filter(term == "year") |>
+    top_n(20, estimate) |>
+    arrange(-estimate)
+
+bottom_20 <- gbd |>
+    filter(str_detect(measure_name, "DAL"), 
+           str_detect(location_name, "Sau"), 
+           str_detect(metric_name, "Rate")) |>
+    nest_by(cause_name) %>%
+    mutate(mod = list(lm(val ~ year,  data = data))) |>
+    reframe(broom::tidy(mod)) |>
+    filter(term == "year") |>
+    top_n(-10, estimate) |>
+    arrange(estimate) |>
+    flextable::flextable()
+
+
+   
+```
+
+## Risk factor analysis
+
+```{r}
+
+risk_dalys <- gbd_risk[measure_name == "DALYs (Disability-Adjusted Life Years)" & metric_name == "Rate",]
+
+risks <- risk_dalys |> pluck("rei_name") |> unique()
+locs <- risk_dalys |> pluck("location_name") |> unique()
+causes <- risk_dalys |> pluck("cause_name") |> unique()
+
+risk_chart <- function(risk, location){
+    
+    risk_dalys[rei_name == risk & val > 30 & location_name == location,] |>
+    ggplot() +
+    #geom_line(aes(year, val, group = cause_name, colour = cause_name)) +
+    geom_labelline(aes(year, val, group = cause_name, colour = cause_name, label = cause_name)) +
+    theme(legend.position = "", 
+          panel.background = element_blank(), 
+          panel.border = element_rect(fill = NA), 
+          plot.title.position = "plot") +
+    scale_color_viridis_d(option = "turbo", direction = -1) +
+    scale_y_log10() +
+    labs(y = "DALYs", 
+         title = paste0("Trend in attributable causes for ", risk,  ": ", location))
+    
+}
+
+risk_chart(risks[3], locs[3])
+
+#map2(x = 1:length(risks), y = 1:length(locs), \(x, y) risk_chart(risks[x], locs[y]))
+
+
+```
+
+```{r}
+
+cause_chart <- function(cause, location){
+    
+    risk_dalys[cause_name == cause & val > 10 & location_name == location & rei_name != "Alcohol use",] |>
+    ggplot() +
+    #geom_line(aes(year, val, group = rei_name, colour = rei_name)) +
+    geom_labelline(aes(year, val, group = rei_name, colour = rei_name, label = rei_name)) +
+    theme(legend.position = "", 
+          panel.background = element_blank(), 
+          panel.border = element_rect(fill = NA), 
+          plot.title.position = "plot") +
+    scale_color_brewer(palette = "RdGy")+
+    labs(y = "DALYs", 
+         title = paste("Trend in attributable risks for", cause), 
+         subtitle = location)
+    
+}
+
+needs(patchwork)
+
+a <- cause_chart(causes[77], locs[3]) + ylim(c(0, 300))
+b <- cause_chart(causes[77], locs[1]) + ylim(c(0, 300))
+
+a + b
+
+```

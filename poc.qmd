@@ -1,0 +1,344 @@
+---
+title: "Proof of concept"
+format: 
+   html:
+       toc: true
+       toc-location: right
+       code-fold: true
+       code-line-numbers: true
+   docx: 
+       toc: true
+   pdf: 
+       toc: true
+editor: visual
+execute: 
+  warning: false
+  message: false
+  echo: false
+---
+
+```{r, setup}
+#| eval: true
+#| echo: false
+
+if(!require("pak"))install.packages("pak", repos = "http://cran.us.r-project.org")
+library(pak)
+
+pkg_install("ropensci/fingertipsR")
+
+#pak(c("quarto", "tidyverse", "needs"))
+library(needs)
+needs(tidyverse, quarto, data.table, janitor, PHEindicatormethods, curl, ggthemes, factoextra, FactoMineR, fingertipsR, skimr, zoo)
+
+```
+
+```{mermaid}
+%%| label: fig-wf
+%%| fig-cap: "Simplified indicator production worklow"
+
+flowchart TD
+
+A(Indicator definition) --> B{Numerator}
+A --> C{Denominator}
+C --> D[(Data source)] -- business logic --> F[[etl]] --> G[(Data store)]
+B --> E[(Data source)] -- business logic --> F
+F --> K[(Metadata store)] --> G
+G -.-> H([metric calculation]) -.-> G
+G -.-> I([Uncertainty calculation]) -.-> G ==> J{{Viz engine}}
+
+
+```
+
+Proposed indicators
+
+1.  Percentage of bloodstream infection due to methicillin-resistant Staphylococcus aureus (MRSA)
+
+2.  Percentage of bloodstream infection due to Escherichia coli resistant to 3rd-generation cephalosporin
+
+3.  Current cigarette smoking among women aged 18-44 years
+
+4.  Non-fatal Hospitalizations for All Injuries
+
+```{mermaid}
+%%| label: fig-cs
+%%| fig-cap: "Ind 1"
+
+flowchart LR
+
+A[Percentage of bloodstream infection due to methicillin-resistant Staphylococcus aureus] --> B[Bloodstream infection] 
+B --> C[MRSA] --> D[+ve]
+
+
+```
+
+```{r}
+#| label: download GB amr indicators
+#| cache: true
+
+p <- profiles()
+# p |>
+#     filter(str_detect(ProfileName, "AMR"))
+# 
+# indicators(DomainID = 1938132908)
+indicator_areatypes(IndicatorID = 93188)
+# fingertipsR::area_types()
+
+amr_data <- fingertips_data(DomainID = 1938132908, AreaTypeID = 118)
+
+amr_data$IndicatorID |> unique()
+
+amr_meta <- fingertipsR::indicator_metadata(IndicatorID = 93188 )
+#amr_meta |> gt::gt()
+
+```
+
+Key elements:
+
+Numerator:
+
+-   Quarterly average count of E.coli lab reports
+
+-   From mandatory surveillance linked blood specimens
+
+-   Tested for resistance to 3rd generation cephalosporin
+
+-   Resistant to 3rd generation cephalosporin (cefotaxime/ceftazidime/cefpodoxime/ceftriaxone)
+
+Denominator
+
+-   Quarterly average count of E.coli initial lab reports
+
+-   Submitted by laboratories via surveillance schemes
+
+-   Successfully linked to E.coli reports
+
+Metric
+
+-   Proportion of E.coli bacteraemia reports demonstrating cephalosporin resistance
+
+    $$
+    Value = Resistant E.coli / Total E.coli
+    $$
+
+-   Rolling yearly average updated quarterly
+
+Disaggregation
+
+-   
+
+```{r}
+
+amr_data |>
+  filter(IndicatorID == 93188) |>
+    skimr::skim()
+
+
+```
+
+Data is disaggregated by time period (quarter) from `r range(amr_data$Timeperiod)[1]` to `r range(amr_data$Timeperiod)[2]` but first data presented is Q4 2016.
+
+### National trend
+
+```{r}
+#| label: fig-trend
+#| fig-cap: "Trend in % of E.coli bacteraemias resistant to 3rd generation cephalosporin"
+
+## we'll need to convert timeperiod variable to appropriate format for quarterly data
+
+amr_england <- amr_data |>
+  filter(IndicatorID == 93188) |>
+  mutate(year = str_extract(Timeperiod, "20\\d{2}"), 
+         quarter = str_extract(Timeperiod, "Q\\d{1}"), 
+         q = case_when(str_detect(quarter, "Q1") ~ "01/01", 
+                       str_detect(quarter, "Q2") ~ "04/01", 
+                       str_detect(quarter, "Q3") ~ "07/01", 
+                       str_detect(quarter, "Q4") ~ "10/01"), 
+         date = ymd(paste0(year, "/", q))
+  ) |>
+  filter(AreaName == "England") 
+
+amr_england |>
+  ggplot() +
+  geom_point(aes(date, Value)) +
+  geom_smooth(aes(date, Value))
+  
+```
+
+### Local trends
+
+```{r}
+#| label: fig-local
+#| fig-cap: "Boxplot of trend in local resistance rates (hospital level)"
+
+amr_local <- amr_data |>
+  filter(IndicatorID == 93188) |>
+  mutate(year = str_extract(Timeperiod, "20\\d{2}"), 
+         quarter = str_extract(Timeperiod, "Q\\d{1}"), 
+         q = case_when(str_detect(quarter, "Q1") ~ "01/01", 
+                       str_detect(quarter, "Q2") ~ "04/01", 
+                       str_detect(quarter, "Q3") ~ "07/01", 
+                       str_detect(quarter, "Q4") ~ "10/01"), 
+         date = ymd(paste0(year, "/", q))
+  ) 
+
+amr_local |>
+  ggplot() +
+  #geom_point(aes(date, Value)) +
+  geom_boxplot(aes(date, Value, group = AreaName), fill = "grey70") +
+  geom_line(aes(date, Value), colour = "red", data = amr_england) +
+  theme(panel.background = element_blank())
+```
+
+```{r}
+#| label: amr_local
+
+amr_local |>
+  filter(AreaName != "England") |>
+  ggplot() +
+  #geom_boxplot(aes(date, Count, group = AreaName)) +
+  geom_smooth(aes(date, Denominator))
+
+
+```
+
+```{r}
+#| label: tests vs positivity
+
+test <- amr_data |>
+  filter(IndicatorID == 92669) |>
+  mutate(year = str_extract(Timeperiod, "20\\d{2}"), 
+         quarter = str_extract(Timeperiod, "Q\\d{1}"), 
+         q = case_when(str_detect(quarter, "Q1") ~ "01/01", 
+                       str_detect(quarter, "Q2") ~ "04/01", 
+                       str_detect(quarter, "Q3") ~ "07/01", 
+                       str_detect(quarter, "Q4") ~ "10/01"), 
+         date = ymd(paste0(year, "/", q))
+  ) |>
+  select(date, AreaName, Value)
+
+pos <- amr_data |>
+  filter(IndicatorID == 93188) |>
+  mutate(year = str_extract(Timeperiod, "20\\d{2}"), 
+         quarter = str_extract(Timeperiod, "Q\\d{1}"), 
+         q = case_when(str_detect(quarter, "Q1") ~ "01/01", 
+                       str_detect(quarter, "Q2") ~ "04/01", 
+                       str_detect(quarter, "Q3") ~ "07/01", 
+                       str_detect(quarter, "Q4") ~ "10/01"), 
+         date = ymd(paste0(year, "/", q))
+  ) |>
+  select(date, AreaName, Value)
+
+test |>
+  left_join(pos, by = c("date", "AreaName")) |>
+  drop_na() |>
+  ggplot(aes(Value.x, Value.y, colour = date)) +
+  geom_point() +
+  geom_smooth() +
+  scale_colour_viridis_c()
+```
+
+All health indicators are measures of performance and performance is only useful through comparison. The level of comparison determines ... For example to address the question "How is SA doing internationally" requires comparison with national metric values from comparator countries or regions. To address the question "are we improving?" requires two sets of time series data - the trend for SA for relevant metrics, and the trend for comparator areas or expected trend - which addresses the question "are we improving as expected / fast enough". The latter question is particularly relevant in relationship to inequalities where the aim might be to reduce the gap between populations.
+
+### Interpreting change over time
+
+If we find a difference in an indicator value between two points in time, or between two population units, there are three potential explanations:
+
+-   The play of chance
+
+-   Data artefacts
+
+-   Genuine difference
+
+The play of chance can be assessed by calculating uncertainty intervals for our metrics. Data artefacts can be much more difficult to detect and requires understanding of the indicator construction, examining trends in numerators and denominators, and variation for outliers and discontinuities. If differences are not due to chance or data issues, they are likely to reflect a real phenomenon. If differences are real, further investigation may require examining stratified data sets e.g. disaggregation by age or sex or area.
+
+Therefore, to be able to disentangle or identify causality data should be as disaggregated in time, place and person as possible (without compromising confidentiality).
+
+This may not always be possible - for example we may have annual surveys...
+
+For some metrics may take many years to develop meaningful trends
+
+### Policy analysis
+
+In an ideal world we would devise metrics which responded quickly to policy change in order to give rapid feedback on whether our interventions are working. We need to be able to understand the counter-factual  - what would have happened without intervention.
+
+| Question               | Comparison | Analysis |
+|------------------------|------------|----------|
+| What is the problem?   |            |          |
+| What is the variation? |            |          |
+| Are there outliers?    |            |          |
+|                        |            |          |
+|                        |            |          |
+
+## Regional  variation
+
+There are x regional sub-divisions within Saudi Arabia. Variation in health metrics or outcomes
+
+```{r}
+#| label: fig-sim
+#| fig-cap: "Simulated data"
+
+
+library(zoo)
+    
+    # Set seed for reproducibility
+    set.seed(123)
+    
+    # Number of observations
+    n <- 10000
+    
+    # Generate the area variable with five categories
+    areas <- c("Area1", "Area2", "Area3", "Area4", "Area5")
+    area <- sample(areas, size = n, replace = TRUE)
+    
+    # Generate the quarterly dates
+    start_date <- ymd("2019-01-01")
+    end_date <- ymd("2023-12-31")
+    quarterly_dates <- seq.Date(start_date, end_date, by = "quarter")
+    
+    # Create a data frame to ensure proportions
+    synthetic_data <- expand.grid(
+        area = areas,
+        date = quarterly_dates
+    ) %>%
+        slice(rep(1:n(), each = n / length(unique(quarterly_dates)) / length(areas))) %>%
+        mutate(
+            test = case_when(
+                area == "Area1" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.8, 0.2)),
+                area == "Area2" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.75, 0.25)),
+                area == "Area3" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.7, 0.3)),
+                area == "Area4" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.6, 0.4)),
+                area == "Area5" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.5, 0.5))
+            )
+        )
+    
+    # Adjust the number of rows to match n
+    synthetic_data <- synthetic_data %>% sample_n(n)
+    
+    # Add an ID column
+    synthetic_data <- synthetic_data %>% mutate(id = row_number())
+    
+    # Check proportions
+    prop_table <- synthetic_data %>%
+        group_by(area, date, test) %>%
+        summarize(count = n()) %>%
+        mutate(proportion = count / sum(count)) |>
+        select(-count) |>
+        pivot_wider(names_from = test, values_from = proportion) |>
+        ungroup() 
+    
+    prop_table |>
+        group_by(area) |>
+        reframe(rm = rollmean(Yes, 4)) |>
+        mutate(date = rep(prop_table$date[1:17], 5)) |>
+        ggplot() +
+        geom_line(aes(date, rm, colour = area), se = FALSE) +
+        labs(title = "Proportion of resistant E.coli specimens \nby Quarter and Area",
+             x = "Quarter",
+             y = "Proportion") +
+        ggthemes::theme_economist() +
+        scale_y_continuous(labels = scales::percent, position = "right") +
+        theme(title = element_text(size = 9))
+        
+            
+
+```

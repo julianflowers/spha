@@ -1,0 +1,174 @@
+---
+title: "Proof of concept"
+format: 
+   html:
+       toc: true
+       toc-location: right
+editor: visual
+execute: 
+  warning: false
+  message: false
+vignette: >
+  %\VignetteIndexEntry{"Proof of concept"}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, setup}
+#| eval: true
+#| echo: false
+
+if(!require("pak"))install.packages("pak", repos = "http://cran.us.r-project.org")
+library(pak)
+
+#pak(c("quarto", "tidyverse", "needs"))
+library(needs)
+needs(tidyverse, quarto, data.table, janitor, PHEindicatormethods, curl, ggthemes, factoextra, FactoMineR)
+
+```
+
+```{mermaid}
+%%| label: fig-wf
+%%| fig-cap: "Simplified indicator production worklow"
+
+flowchart LR
+
+A(Indicator definition) --> B{Numerator}
+A --> C{Denominator}
+C --> D[(Data source)] -- business logic --> F[[etl]] --> G[(Data store)]
+B --> E[(Data source)] -- business logic --> F
+F --> K[(Metadata store)] --> G
+G -.-> H([metric calculation]) -.-> G
+G -.-> I([Uncertainty calculation]) -.-> G ==> J{{Viz engine}}
+
+
+```
+
+```{r}
+#| label: load gbd saudi data
+
+sa_df <- fread("/Users/julianflowers/Library/CloudStorage/GoogleDrive-julian.flowers12@gmail.com/My Drive/Saudi/GBD-DATA-INPUT-SOURCES-1.csv")
+
+sa_df <- sa_df |> janitor::clean_names()
+
+glimpse(sa_df)
+
+```
+
+```{r}
+#| label: explore causes of death
+
+## calc death rates
+sa_df_death_rates <- sa_df[component == "Causes of Death", .(n = .N, sample_size), by = .(year_start, sex, age_start, cause)][, rate := 10^5 * (n / sample_size)] |>
+    distinct()
+
+
+
+```
+
+```{r}
+#| label: exploratory viz
+
+## extract cause list
+
+causes <- unique(sa_df$cause)
+
+# sa_df_death_rates[cause %in% c("Tetanus", "Diarrheal diseases") & year_start > 1999 & age_start >= 5,] |>
+#     ggplot() +
+#     geom_line(aes(factor(year_start), rate, colour = factor(age_start), group = factor(age_start))) +
+#     facet_grid(sex ~ cause, scales = "free")
+
+```
+
+The primary data source for this example is the [GBD results tool](https://vizhub.healthdata.org/gbd-results/) - this gives access to the underlying data for the global burden of disease (GBD) which contains causes of death disaggregated by metric, year, country, cause (ICD10), sex and age. Data can be downloaded via the tool interface as `.csv` files and stored locally. For this example, the query used is available [here](https://vizhub.healthdata.org/gbd-results?params=gbd-api-2021-permalink/7ea58d45be5f801835df829891bb0d03)
+
+```{r, eval=FALSE}
+ 
+## download and extract zip file
+
+tmpd <- tempdir()
+tmpf <- tempfile()
+tmp <- curl_download("https://dl.healthdata.org/gbd-api-2021-public/579f2596e0a2d75c3de2df9d796e92ab_files/IHME-GBD_2021_DATA-579f2596-1.zip", tmpf)
+sa_f <- unzip(tmp, exdir = tmpd)
+sa_f1 <- fread(sa_f[1])
+
+
+```
+
+This extract has `r nrow(sa_f1)` records. It contains death rates and counts for all ages for communicable diseases, by sex, globally and for North African and Middle Eastern countries.
+
+We'll pivot the data to disentangle the metrics and age groups
+
+```{r, eval=FALSE}
+#| label: unpivot
+
+sa_f1_w <- sa_f1 |>
+    pivot_wider(id_cols = c(year, location_name, sex_name, rei_name), names_from = c("metric_name", "age_name"), values_from = c("val", "lower", "upper"), values_fn = mean) |>
+    as.data.table()
+
+
+```
+
+Now visualise:
+
+```{r, eval=FALSE}
+#| label: fig-trends
+#| fig-cap: "Communicable disease trends"
+
+sa_f1[str_detect(location_name, "Saudi") & age_name == "Age-standardized",] |>
+    ggplot(aes(year, val, colour = rei_name, lty = sex_name)) +
+        geom_line(show.legend = FALSE) +
+        #facet_wrap(~ rei_name, labeller = label_wrap_gen(10), ncol=6) +
+    ggthemes::theme_base() +
+    #scale_y_log10(label = scales::comma) +
+    theme(text = element_text(size = 7))
+
+
+```
+
+## Create a composite communicable disease mortality metric
+
+### Method 1 Simple average
+
+```{r, eval=FALSE}
+#| label: fig-trends-1
+#| fig-cap: "Communicable disease trends - indexed"
+
+sa_f1 |>
+    select(year, contains("name"), val) |>
+    filter(measure_name == "Deaths", metric_name == "Rate", str_detect(location_name, "Saud")) |>
+    mutate(age_name = fct_relevel(age_name, "5-9 years", after = 2)) |>
+    group_by(age_name, rei_name) |>
+    mutate(index = val / val[1]) |>
+    ggplot(aes(year, index, colour = age_name)) +
+    geom_line() +
+    geom_hline(yintercept = 1, lty = 2) +
+    facet_wrap(~ rei_name) +
+    scale_y_log10(label = scales::comma, n.breaks = 7) +
+    scale_color_viridis_d(direction = -1, option = "turbo") +
+    ggthemes::theme_base() +
+    theme(text = element_text(size = 9))
+
+```
+
+### Method 2 PCA components
+
+```{r,eval=FALSE}
+#| label: fig-pca
+#| fig-cap: "Communicable disease PCA plots"
+#| fig-subcap: 
+#|      - "Ind plot"
+#|      - "Biplot"
+#| layout-nrow: 1
+
+sa_f1_w <- sa_f1[measure_name == "Deaths" & metric_name == "Rate" & str_detect(location_name, "Saudi"), ] |>
+    select(year, age_name, rei_name, val) |>
+    pivot_wider(names_from = rei_name, values_from = val)
+
+
+
+pc_sa <- PCA(sa_f1_w[, 3:20], )
+
+
+
+```

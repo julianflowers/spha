@@ -1,0 +1,232 @@
+---
+title: "Public Health Outcomes Framework"
+format: html
+editor: visual
+---
+
+## 
+
+```{r}
+needs(fingertipsR, tidyverse, arsenal, umap, dbscan, Rtsne, factoextra, FactoMineR)
+
+fingertipsR::profiles()
+
+area_types()
+
+phof_inds <- fingertipsR::indicators_unique(ProfileID = 19)
+
+phof_inds_id <- phof_inds$IndicatorID
+
+phof_data <- fingertips_data(IndicatorID = phof_inds_id,  AreaTypeID = 401)
+
+phof_data$AreaType |>
+    unique()
+```
+
+```{r}
+
+phof_data_2021 <- phof_data |>
+    select(IndicatorName, AreaCode, AreaName, AreaType, Sex, Age, Value, TimeperiodSortable) |>
+    mutate(index = paste(IndicatorName, Sex, Age, TimeperiodSortable)) |>
+    filter(AreaType == "Districts & UAs (2021/22-2022/23)") |> 
+    select(index, AreaCode, AreaName, Value) 
+    
+
+phof_matrix <- phof_data_2021 |>
+    select(-AreaCode) |> 
+    pivot_wider(names_from = index, values_from = Value)
+
+```
+
+```{r}
+phof_matrix_1 <- map_dfr(phof_matrix, \(x) ifelse(is.na(x), median(x, na.rm = TRUE), x)) 
+
+map(phof_matrix_1, \(x) mean(is.na(x))) |>
+    enframe() |>
+    filter(value > 0) |>
+    unnest(value)
+
+phof_matrix_2 <- phof_matrix_1[, -1] |>
+    select(-`TB incidence (three year average) Persons All ages 20000000` ) |>
+    scale() |>
+    data.frame()
+
+set.seed(1234)
+
+phof_matrix_2_tsne <- Rtsne::Rtsne(phof_matrix_2, perplexity = 20)
+
+phof_matrix_2_tsne$Y |>
+    data.frame() |>
+    ggplot(aes(X1, X2)) +
+    geom_point()
+```
+
+```{r}
+
+phof_clusters <- phof_matrix_2_tsne$Y |>
+    hdbscan(minPts = 3) 
+
+p_m <- phof_matrix_2_tsne$Y |>
+    bind_cols(phof_clusters$cluster, area = phof_matrix$AreaName) 
+
+p_m |>
+    ggplot(aes(...1, ...2, colour = factor(...3))) +
+    geom_point() +
+    stat_ellipse(data = p_m |> filter(...3 != 0))
+
+
+```
+
+```{r}
+
+
+pca <- PCA(phof_matrix_2)
+
+fviz_eig(pca)
+
+fviz_contrib(pca, choice = "var", axes = c(1:2), top = 10)
+
+```
+
+We'll select variables
+
+```{r}
+
+le <- phof_matrix_2 |> select(starts_with("Life.ex")) |>
+    select(contains('2020'))
+obesity <- phof_matrix_1 |> select(contains("overweight")) 
+
+|>
+    select(contains('2021'))
+diabetes <- phof_matrix_2 |> select(contains("diabete"))
+ses <- phof_matrix_2 |> select(contains("depriv"))
+
+## and combine
+
+features <- le |>
+    bind_cols(obesity, diabetes, ses) |>
+    janitor::clean_names()
+
+rownames(features) <- phof_matrix_1$AreaName
+```
+
+## Correlations
+
+```{r}
+
+cor(features) |>
+    corrplot::corrplot(tl.cex = 0.5, tl.col = "black", order = "hclust", addrect = 3)
+
+```
+
+## Inference
+
+Linear model - influence of deprivation, diabetes and obesity on life expectancy
+Use male le at birth
+
+```{r}
+
+features_1 <- features |>
+    select(c(1, 5:13))
+
+mod <- lm(-features_1$life_expectancy_at_birth_male_all_ages_20200000 ~ ., data = features_1) 
+
+mod |>
+    broom::glance()
+
+mod |>
+    broom::tidy() |>
+    filter(p.value < 0.05)
+
+```
+
+
+```{r}
+
+adult_obesity <- obesity |>
+    select(contains("Adul")) |>
+    cbind(area = phof_matrix_1$AreaName)|>
+    gather(ind, val, 1:7) |>
+    mutate(year = str_extract(ind, "20\\d{2}")) 
+
+
+
+
+```
+
+```{r}
+#| label: pictogram
+
+needs(waffle, extrafont, fontawesome, hrbrthemes, ggridges)
+
+extrafont::loadfonts(quiet = TRUE)
+
+fontawesome::fa("person-walking")
+
+adult_obesity_one_area <- adult_obesity |>
+    group_by(year) |>
+    slice(1) |>
+    mutate(obese = val, 
+           not_obese = 100 - val) |>
+    gather(obesity, value, 5:6) |>
+    mutate(obesity = factor(obesity, levels = c("obese", "not_obese")))
+
+adult_obesity_one_area |>
+    filter(year %in% c(2015, 2021)) |>
+    ggplot(aes(fill = obesity, values = value)) +
+    geom_waffle(n_rows = 10, make_proportional = TRUE) +
+    facet_wrap(~ year) +
+    theme_ipsum_rc(grid="") +
+    theme_enhance_waffle() +
+    ggtitle("Obesity rates in your area in 2015 and 2021")
+
+means = adult_obesity |> group_by(year) |> reframe(mean = mean(val))
+medians = adult_obesity |> group_by(year) |> reframe(median = median(val))
+
+
+adult_obesity |>
+    ggplot() +
+    geom_line(aes(year, val, group = area), color = "grey90") +
+    geom_line(aes(year, val, group = area), color = "red", data = adult_obesity |> filter(area == "Hartlepool")) +
+    geom_line(aes(year, mean, group = 1), color = "black", data = means) +
+
+    ggthemes::theme_base() +
+    labs(y = "Obesity and overweight rate (%)", 
+         x ="Year", 
+         title = "Trend in local obesity rates", 
+         subtitle = "Each line is a local area (n = 309)",
+         caption = "Source: PHOF\nred line = Your area\nblack line = England") +
+    theme(plot.title.position = "plot")
+    
+your_area_2015 <- adult_obesity |> filter(area == "Hartlepool", year == 2015) |> select(val)
+your_area_2021 <- adult_obesity |> filter(area == "Hartlepool", year == 2021) |> select(val)
+
+adult_obesity |>
+    ggplot(aes(val, factor(year), height = stat(density))) +
+    ggridges::geom_density_ridges(stat = "density") +
+    # geom_vline(xintercept = medians$median[1]) +
+    # geom_vline(xintercept = medians$median[7]) +
+    geom_vline(xintercept = your_area_2015$val, colour = "red", lty = "dotted") +
+    geom_vline(xintercept = your_area_2021$val, colour = "red") +
+    labs(y = "Year", 
+         x = "Obesity and overweight rate (%)", 
+         title = "Distribution and trend of obesity rates in English areas between 2015 and 2021", 
+         subtitle = "Obesity rates have increased and the variation between area has increased. \nThe increase is illustrated by the area specified by area picked out by the red line where \nobesity rates increased from 67.2% in 2015 (dotted) to 76% in 2021 (solid)") +
+
+
+    ggthemes::theme_base() +
+    theme(plot.title.position = "plot")
+    
+   
+
+```
+
+```{r}
+
+
+
+
+
+
+```
+
