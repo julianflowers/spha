@@ -17,6 +17,8 @@ subtitle: Analysis of Global Burden of Disease (GBD) data for Saudi Arabia
 
 knitr::opts_chunk$set(echo = FALSE, cache = TRUE, message = FALSE, warning = FALSE)
 path <- here::here("data/john-snow-data-master")
+#install.packages("needs")
+library(needs)
 
 ```
 
