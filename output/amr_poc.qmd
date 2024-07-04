@@ -1,0 +1,154 @@
+---
+title: "poc-amr"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+#| message: false
+#| warning: false
+
+needs(tidyverse, data.table, googledrive, readxl, skimr, janitor, gt, gtsummary, collapsibleTree, PHEindicatormethods, ggthemes)
+
+dir <- here::here("~/spha/data/fwdatastrategypocpublichealthframeworkindicators")
+
+amr <- read_xlsx(paste0(dir, "/AMR 2022 POC.xlsx")) |> janitor::clean_names() |> setDT()
+
+theme_set(ggthemes::theme_economist())
+
+
+```
+
+## Introduction
+
+This document outlines a stepwise approach to calculating AMR indicators from dummy data kindly supplied by PHA.
+
+There are x steps
+
+1.  EDA (exploratory data analysis of raw data) - this involves cleaning, visualisation and creation of relevant variables.
+
+2.  Review of indicator definitions
+
+    -   Numerator
+
+    -   Denominator
+
+3.  Method for calculating numerator and denominator values from dataset. The outline uses R code for reproducibility and flexibility.
+
+4.  Calculating indicator values and uncertainty intervals
+
+5.  Suggested indicator visualisations (if appropriate).
+
+## AMR indicators
+
+### MRSA
+
+> Percentage of bloodstream infection due to methicillin-resistant Staphylococcus aureus (MRSA)
+>
+> Numerator: No. of patients with growth of methicillin-resistant S. aureus in tested blood samples
+>
+> Denominator: Total No. of patients with growth of S. aureus in tested blood samples
+
+#### S1 Import data
+
+```{r}
+
+df <- amr
+
+```
+
+`r dim(amr)[1]` observations
+
+#### calculate 5-year age bands
+
+```{r}
+
+amr <- amr[, `:=` (five_year = cut(age_year, breaks = seq(0, 100, 5), right = FALSE))][]
+
+```
+
+remove non-relevant data
+
+```{r}
+
+amr <- amr |> select(-c(family_name, first_name, sample_no, patient_mrn, second_name, national_iqama_id, nationality))
+
+```
+
+create per test file (long data) - this create a *per test* datasets rather than a per patient sample dataset
+
+```{r}
+
+amr_long <- amr |>
+    pivot_longer(names_to = "antibiotic_test", values_to = "resistance", cols = minocycline:spectinomycin) |> setDT()
+    
+
+```
+
+review patterns of resistance for staph aureus
+
+overall
+
+```{r}
+
+amr_long[pathogen_name == "Staphylococcus aureus" & !is.na(resistance), .N, by = .(resistance)] |>
+    pivot_wider(names_from = resistance, values_from = N) |>
+    rowwise() |>
+    mutate(total_tests = sum(c_across(S:I), na.rm = TRUE), 
+           resistance_rate = R / total_tests)
+
+```
+
+by antibiotic
+
+```{r}
+
+options(digits = 2)
+
+amr_res_ci_sa <- amr_long[pathogen_name == "Staphylococcus aureus" & !is.na(resistance), .N, by = .(antibiotic_test, resistance)] |>
+    pivot_wider(names_from = resistance, values_from = N, values_fill = 0) |>
+    rowwise() |>
+    mutate(total_tests = sum(c_across(S:I), na.rm = TRUE), 
+           resistance_rate = R / total_tests)
+
+phe_proportion(amr_res_ci_sa, R, total_tests) |>
+    bind_cols(amr_res_ci_sa) |>
+    ggplot() +
+    geom_point(aes(reorder(antibiotic_test, value), value)) +
+    geom_linerange(aes(antibiotic_test, ymin = lowercl, ymax = uppercl)) +
+    coord_flip() +
+    labs(y = "Staph. aureus resistance rate", x = "") + 
+    scale_y_continuous(position = "right")
+
+```
+
+review patterns for E. coli
+
+```{r}
+
+amr_res_ci_ec <- amr_long[str_detect(pathogen_name, "coli") & !is.na(resistance), .N, by = .(antibiotic_test, resistance)] |>
+    pivot_wider(names_from = resistance, values_from = N, values_fill = 0) |>
+    rowwise() |>
+    mutate(total_tests = sum(c_across(R:I), na.rm = TRUE), 
+           resistance_rate = R / total_tests)
+
+phe_proportion(amr_res_ci_ec, R, total_tests) |>
+    bind_cols(amr_res_ci_ec) |>
+    ggplot() +
+    geom_point(aes(reorder(antibiotic_test, value), value)) +
+    geom_linerange(aes(antibiotic_test, ymin = lowercl, ymax = uppercl)) +
+    coord_flip() +
+    labs(y = "E. coli resistance rate", x = "") + scale_y_continuous(position = "right")
+
+
+
+```
+
+#### select methicillin tested samples
+
+```{r}
+
+amr[, .SD, .SDcols = c("record_number", "location", "patient_hospitalized", "specific_location", "community_origin", "site", "pathogen_name", "five_year")]
+```

@@ -1,0 +1,88 @@
+---
+title: "smoking-poc"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
+
+## 
+
+```{r}
+#| label: setup
+#| include: false
+
+
+needs(tidyverse, data.table, googledrive, readxl, skimr, janitor, gt, gtsummary, collapsibleTree, PHEindicatormethods, ggthemes, sf, tmap, ggspatial, curl, raster, stars)
+
+theme_set(ggthemes::theme_economist())
+
+dir <- here::here("~/spha/data/fwdatastrategypocpublichealthframeworkindicators")
+
+smoking <-  fread(paste0(dir, "/Smoking 2022.csv"))
+
+
+```
+
+### Data preparation
+
+```{r}
+#| label: create age bands
+
+smoking <- smoking[, `:=` (five_year = cut(age, breaks = seq(0, 100, 5), right = FALSE), `18-44` = between(age, 18, 44), `15+` = age >= 15)][]
+
+```
+
+### Calculate numerator and denominator
+
+```{r}
+#| label: numerator
+
+smoking[patient_gender == "female" & `18-44` == TRUE, .N, by = .(directorate_name, year)]
+
+## probably better - easier to calculate / matching age bands/ more statitsical power NB crude rates
+
+smoking[patient_gender == "female" & `15+` == TRUE, .N, by = .(directorate_name, year)]
+
+## denominator
+
+```
+
+### Choropleth map
+
+```{r}
+
+sa_shp <- curl_download("https://data.humdata.org/dataset/41ce9023-1d21-4549-a485-94316200aba0/resource/a0188b1b-2f40-4f27-8a43-25913a7378ca/download/sau_adm_gadm_20210525_shp.zip", destfile = tempfile())
+
+tmpd <- tempdir()
+
+sa_shp_1 <- curl_download("https://data.humdata.org/dataset/41ce9023-1d21-4549-a485-94316200aba0/resource/99834c81-ad34-415e-91c5-af053d8e55b4/download/sau_capp_adm1_1m_ocha.zip", destfile = tempfile())
+
+sa_pop_d <- curl_download("https://data.humdata.org/dataset/14b288ca-1855-4025-9f01-41cba548e6f6/resource/44baa2f6-b6d8-4018-b9c6-fd81b493ec22/download/sau_general_2020_geotiff.zip", destfile = tempfile())
+
+sa_shp <- unzip(sa_shp, exdir = tmpd)
+
+sa_shp_1 <- unzip(sa_shp_1, exdir = tmpd)
+
+sa_tif <- unzip(sa_pop_d, exdir = tmpd)
+
+shps <- fs::dir_ls(tmpd, regexp = "shp")
+
+sa_bound <- read_sf(shps[4]) 
+
+sa_bound |>
+    ggplot() +
+    geom_sf(aes(fill = ADM1_EN)) +
+    geom_sf(data = read_sf(shps[12])) +
+    geom_sf_label(data = read_sf(shps[12]), aes(label = NAME), colour = "blue", size = 3, nudge_y = .5) +
+    theme_void() +
+    scale_fill_viridis_d(option = "rocket")
+
+smoking$directorate_name |>
+    unique()
+
+sa_bound$ADM1_EN
+
+
+# source("/Users/julianflowers/Library/CloudStorage/GoogleDrive-julian.flowers12@gmail.com/My Drive/Saudi/pop-den.R")
+```

@@ -4,6 +4,7 @@ format:
    html:
        toc: true
        toc-location: right
+       toc-depth: 4
        code-fold: true
        code-line-numbers: true
    docx: 
@@ -15,6 +16,7 @@ execute:
   warning: false
   message: false
   echo: false
+bibliography: references.bib
 ---
 
 ```{r, setup}
@@ -23,33 +25,27 @@ execute:
 
 if(!require("pak"))install.packages("pak", repos = "http://cran.us.r-project.org")
 library(pak)
+#pak("devtools")
 
-pkg_install("ropensci/fingertipsR")
+# Enable repository from ropensci
+options(repos = c(
+  ropensci = 'https://ropensci.r-universe.dev',
+  CRAN = 'https://cloud.r-project.org'))
+
+# Download and install fingertipsR in R
+install.packages('fingertipsR')
 
 #pak(c("quarto", "tidyverse", "needs"))
 library(needs)
-needs(tidyverse, quarto, data.table, janitor, PHEindicatormethods, curl, ggthemes, factoextra, FactoMineR, fingertipsR, skimr, zoo)
+needs(tidyverse, quarto, data.table, janitor, PHEindicatormethods, curl, ggthemes, factoextra, FactoMineR, fingertipsR, skimr, zoo, gt, flextable)
 
 ```
 
-```{mermaid}
-%%| label: fig-wf
-%%| fig-cap: "Simplified indicator production worklow"
+## Introduction
 
-flowchart TD
+This paper sets out an illustrated approach to developing an end-to-end approach to indicator development, publication and interpretation to assess health status, help develop health policy, and evaluate performance for the Saudi Public Health Authority (SPHA).
 
-A(Indicator definition) --> B{Numerator}
-A --> C{Denominator}
-C --> D[(Data source)] -- business logic --> F[[etl]] --> G[(Data store)]
-B --> E[(Data source)] -- business logic --> F
-F --> K[(Metadata store)] --> G
-G -.-> H([metric calculation]) -.-> G
-G -.-> I([Uncertainty calculation]) -.-> G ==> J{{Viz engine}}
-
-
-```
-
-Proposed indicators
+SPHA have selected 4 indicators for this proof-of-concept. They are:
 
 1.  Percentage of bloodstream infection due to methicillin-resistant Staphylococcus aureus (MRSA)
 
@@ -59,20 +55,67 @@ Proposed indicators
 
 4.  Non-fatal Hospitalizations for All Injuries
 
+## A generic approach to indicators
+
+### Indicator production pipelines
+
+It can be helpful to think of the indicator development and production process as pipeline which takes raw data as a input, and "pipes" it through various processing stages to generate indicators which can be analysed and visualised. At each step of the process are "inspection hatches" - quality assurance points whicu ensure that the process is doing what is expecged. Years of experience suggests a generic approach to developing actionable indicator sets. This is summarised in @fig-wf.
+
 ```{mermaid}
-%%| label: fig-cs
-%%| fig-cap: "Ind 1"
+%%| label: fig-wf
+%%| fig-cap: "Simplified indicator production workflow"
 
-flowchart LR
+flowchart TD
 
-A[Percentage of bloodstream infection due to methicillin-resistant Staphylococcus aureus] --> B[Bloodstream infection] 
-B --> C[MRSA] --> D[+ve]
-
+A(Indicator definition) --> B{Numerator}
+A --> C{Denominator}
+C --> D[(Data source)] -- etl --> G[(Data store)]
+B --> E[(Data source)] -- etl --> G
+G --> M[(Metadata store)] --> G
+G -.-> H([Indicator calculation]) -.-> G
+G -.-> I([Uncertainty calculation]) -.-> G ==> J{{Viz engine}}
+G --> K((QA)) --> G
+H --> L((QA)) --> H
 
 ```
 
+### Generic indicator definition
+
+Metric
+
+:   a set of data or measures
+
+Indicator
+
+:   A summary measure that
+    aims to describe, in a few numbers as
+    much detail as possible about a system,
+    to help understand, compare, predict,
+    improve, and innovate. [@pencheon2007]
+
+A key step it so recognise that indicators are numerical values calculated from a numerator and denominator and in a public health context, numerators are event or instance counts and denominators are populations at risk. Public health metrics are generally rates, ratios, or proportions.
+
+$$
+Metric = numerator/denominator
+$$ Both numerators and denominators will be derived and aggregated from an underlying record system (for example clinical systems, lab systems, vital registration systems, survey databases) which may hold individual records, already aggregated data, or survey results.
+
+The process of generating indicator values will require extracting the right values (business logic, e.g. SQL queries) as part of an Extract-Transform-Load (ETL). Ideally, indicator values would be calculated directly from numerator and denominator values (although this may not always be possible for example if metrics are age-standardised), and should flow and be stored at the **most disaggregated level possible without compromising confidentiality**. This ensures maximum flexibility and responsiveness to policy change, increases statistical power, enables trend analysis and underpins quality assurance.
+
+Therefore a public health indicator system will need a regular flow of highly disaggregated numerator and denominator data from primary data sources. Efficiency dictates that these flows are standarised, and utility that they are as near-real-time as possible.
+
+**Good meta-data** is essential for operating an indicator system and should be linked to each indicator and stored in database format. Each element needs a description of its source, how the value is derived (business logic or calculation details), method of calculation of uncertainty/confidence intervals, as well as rationale, stratifications e.g. temporal disaggregation, age-sex, SES breakdowns and additional information essential for interpretation for example, data discontinuities, recency and so on.
+
+### Public health is a system and everything is comparative
+
+We cannot assess improvement, performance, health status, or develop policy without making comparison. Indeed epidemiology is a science of comparison.
+
+### Illustration #1:  E. coli cephalosporin resistance
+
+To illustrate I will use English data for E.coli resistance to 3-rd generation cephalosporins. These data are an adjunct to the Public Health Outcome Framework and are publicly available for each NHS hospital in England on a quarterly basis. Detailed metadata is shown in @tbl-amr.
+
 ```{r}
-#| label: download GB amr indicators
+#| label: tbl-amr
+#| tbl-cap: "Detailed metadata"
 #| cache: true
 
 p <- profiles()
@@ -80,70 +123,49 @@ p <- profiles()
 #     filter(str_detect(ProfileName, "AMR"))
 # 
 # indicators(DomainID = 1938132908)
-indicator_areatypes(IndicatorID = 93188)
+## indicator_areatypes(IndicatorID = 93188)
 # fingertipsR::area_types()
 
 amr_data <- fingertips_data(DomainID = 1938132908, AreaTypeID = 118)
 
-amr_data$IndicatorID |> unique()
+## amr_data$IndicatorID |> unique()
 
 amr_meta <- fingertipsR::indicator_metadata(IndicatorID = 93188 )
-#amr_meta |> gt::gt()
+
+flextable::set_flextable_defaults(big.mark = "")
+
+amr_meta |>
+   pivot_longer(names_to = "definition", values_to = "description", cols = 2:32) |>
+   flextable::flextable()
 
 ```
 
-Key elements:
+The metadata provides detail for transparency, and also complies with FAIR principles for reporting [@rothfritz2019]. High quality meta-data is essential for data sharing and reproducibility.
 
-Numerator:
+-   *Polarity*. This refers to the interpretation and directionality of high (or low) indicator values, specifically if a whether significant value are considered desirable or undesirable i.e. *low is good* or *high is good.* This concept drives the use of colour in data visualisation. For example, low mortality overall, or from any given cause is more desirable than high mortality. Note that mortality is generally compared with a benchmark, and statistically significant difference determined by whether the confidence interval of the indicator contains the benchmark value. If an metric has a definite polarity, it has more use an actionable indicator than a metric without polarity. The PHOF makes extensive use of RAG (red-amber-green) colour palette to denote polarity.
 
--   Quarterly average count of E.coli lab reports
+-   *Red-red.* If comparisons are made at different scales, of for both temporal and cross-sectional comparisons, a red-red approach is a rapid surveillance tool for detecting strata that are both performing badly, and not making progress. (See example)
 
--   From mandatory surveillance linked blood specimens
-
--   Tested for resistance to 3rd generation cephalosporin
-
--   Resistant to 3rd generation cephalosporin (cefotaxime/ceftazidime/cefpodoxime/ceftriaxone)
-
-Denominator
-
--   Quarterly average count of E.coli initial lab reports
-
--   Submitted by laboratories via surveillance schemes
-
--   Successfully linked to E.coli reports
-
-Metric
-
--   Proportion of E.coli bacteraemia reports demonstrating cephalosporin resistance
-
-    $$
-    Value = Resistant E.coli / Total E.coli
-    $$
-
--   Rolling yearly average updated quarterly
-
-Disaggregation
-
--   
+Resistance data in England is published quarterly at hospital level and is calculated as rolling year i.e. each point estimate is the annual value to that point in time. This approach smooths the data.
 
 ```{r}
-
-amr_data |>
-  filter(IndicatorID == 93188) |>
-    skimr::skim()
-
-
+#| eval: false
+fingertips_redred(DomainID = 1938132908 , AreaTypeID = 118)
 ```
 
-Data is disaggregated by time period (quarter) from `r range(amr_data$Timeperiod)[1]` to `r range(amr_data$Timeperiod)[2]` but first data presented is Q4 2016.
+Data is currently available from `r range(amr_data$Timeperiod)[1]` to `r range(amr_data$Timeperiod)[2]` starting with Q4 2016.
 
-### National trend
+#### Trend and variation
 
 ```{r}
 #| label: fig-trend
-#| fig-cap: "Trend in % of E.coli bacteraemias resistant to 3rd generation cephalosporin"
+#| layout-ncol: 1
+#| fig-cap: 
+#|      - "England Trend in % of E.coli bacteraemias resistant to 3rd generation cephalosporin"
+#|      - "Mean and variation (SD)"
+#|      
 
-## we'll need to convert timeperiod variable to appropriate format for quarterly data
+## we'll need to convert time period variable to appropriate format for quarterly data
 
 amr_england <- amr_data |>
   filter(IndicatorID == 93188) |>
@@ -154,52 +176,42 @@ amr_england <- amr_data |>
                        str_detect(quarter, "Q3") ~ "07/01", 
                        str_detect(quarter, "Q4") ~ "10/01"), 
          date = ymd(paste0(year, "/", q))
-  ) |>
-  filter(AreaName == "England") 
+  ) 
 
 amr_england |>
+  filter(AreaName == "England") |>
   ggplot() +
-  geom_point(aes(date, Value)) +
-  geom_smooth(aes(date, Value))
+  geom_point(aes(date, Value/100)) +
+  geom_smooth(aes(date, Value/100)) +
+  ggthemes::theme_economist() +
+  scale_y_continuous(position = "right", label = scales::percent) +
+    labs(x = "Date", 
+        y = "Percentage resistance", 
+        title = "% E.coli bacteraemias resistant to 3rd gen cephalosporins") +
+    theme(title = element_text(size = 9))
+
+
+amr_england |>
+  filter(str_detect(AreaType, "Acute")) |>
+  group_by(date) |>
+  reframe(sd = sd(Value), 
+          mean = mean(Value)) |>
+  ggplot() +
+  geom_point(aes(date, sd/100)) +
+  geom_smooth(aes(date, sd/100), se = FALSE) +
+  #geom_line(aes(date, Value), colour = "red", data = amr_england) +
+  theme(panel.background = element_blank()) +
+  ggthemes::theme_economist() +
+  scale_y_continuous(position = "right", label = scales::percent) +
+    labs(x = "Date", 
+        y = "Percentage resistance", 
+        title = "% E.coli bacteraemias resistant to 3rd gen cephalosporins",
+        subtitle = "Mean and SD (point)") +
+    theme(title = element_text(size = 9))
   
 ```
 
-### Local trends
-
-```{r}
-#| label: fig-local
-#| fig-cap: "Boxplot of trend in local resistance rates (hospital level)"
-
-amr_local <- amr_data |>
-  filter(IndicatorID == 93188) |>
-  mutate(year = str_extract(Timeperiod, "20\\d{2}"), 
-         quarter = str_extract(Timeperiod, "Q\\d{1}"), 
-         q = case_when(str_detect(quarter, "Q1") ~ "01/01", 
-                       str_detect(quarter, "Q2") ~ "04/01", 
-                       str_detect(quarter, "Q3") ~ "07/01", 
-                       str_detect(quarter, "Q4") ~ "10/01"), 
-         date = ymd(paste0(year, "/", q))
-  ) 
-
-amr_local |>
-  ggplot() +
-  #geom_point(aes(date, Value)) +
-  geom_boxplot(aes(date, Value, group = AreaName), fill = "grey70") +
-  geom_line(aes(date, Value), colour = "red", data = amr_england) +
-  theme(panel.background = element_blank())
-```
-
-```{r}
-#| label: amr_local
-
-amr_local |>
-  filter(AreaName != "England") |>
-  ggplot() +
-  #geom_boxplot(aes(date, Count, group = AreaName)) +
-  geom_smooth(aes(date, Denominator))
-
-
-```
+Data for England suggests that resistance rates have increased as has the variation between hospitals.
 
 ```{r}
 #| label: tests vs positivity
@@ -239,7 +251,147 @@ test |>
 
 All health indicators are measures of performance and performance is only useful through comparison. The level of comparison determines ... For example to address the question "How is SA doing internationally" requires comparison with national metric values from comparator countries or regions. To address the question "are we improving?" requires two sets of time series data - the trend for SA for relevant metrics, and the trend for comparator areas or expected trend - which addresses the question "are we improving as expected / fast enough". The latter question is particularly relevant in relationship to inequalities where the aim might be to reduce the gap between populations.
 
-### Interpreting change over time
+### Using dummy data for cephalosporin resistance
+
+For this illustration we will simulate a dataset of 50000 bacteraemia observations for 8 regional sub-divisions within Saudi Arabia with variable AMR rates from 3 - 21%.
+
+```{r}
+#| label: tbl-sim
+#| tbl-cap: "First 20 rows of simulated results of E.coli baacteraemia resistance to 3rd gen cephalosporins "
+
+
+library(zoo)
+    
+    # Set seed for reproducibility
+    set.seed(123)
+    
+    # Number of observations
+    n <- 50000
+    
+    # Generate the area variable with five categories
+    areas <- c("Area1", "Area2", "Area3", "Area4", "Area5", "Area6", "Area7", "Area8")
+    area <- sample(areas, size = n, replace = TRUE)
+    
+    # Generate the quarterly dates
+    start_date <- ymd("2019-01-01")
+    end_date <- ymd("2023-12-31")
+    quarterly_dates <- seq.Date(start_date, end_date, by = "quarter")
+    
+    # Create a data frame to ensure proportions
+    synthetic_data <- expand.grid(
+        area = areas,
+        date = quarterly_dates
+    ) %>%
+        slice(rep(1:n(), each = n / length(unique(quarterly_dates)) / length(areas))) %>%
+        mutate(
+            test = case_when(
+                area == "Area1" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.03, 0.97)),
+                area == "Area2" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.06, 0.94)),
+                area == "Area3" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.09, 0.91)),
+                area == "Area4" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.12, 0.88)),
+                area == "Area5" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.15, 0.85)),
+                area == "Area6" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.18, 0.82)),
+                area == "Area7" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.21, 0.79)),
+                area == "Area8" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.24, 0.76)),
+
+            )
+        )
+    
+    # Adjust the number of rows to match n
+    synthetic_data <- synthetic_data %>% sample_n(nrow(synthetic_data))
+    
+    # Add an ID column
+    synthetic_data <- synthetic_data %>% mutate(id = row_number())
+    
+    head(synthetic_data, 20) |>
+      knitr::kable()
+    
+```
+
+Using our modelled data we can quarterly trends in resistance and examine period to period change in variation (see @fig-synth-1; @fig-synth-2)
+
+```{r}
+#| label: fig-synth
+#| fig-cap:
+#|     - "Trend"
+#|     - "Variation" 
+  
+    # Check proportions
+    prop_table <- synthetic_data %>%
+        group_by(area, date, test) %>%
+        summarize(count = n()) %>%
+        mutate(proportion = count / sum(count)) |>
+        select(-count) |>
+        pivot_wider(names_from = test, values_from = proportion) |>
+        ungroup() 
+    
+    prop_table |>
+        group_by(area) |>
+        reframe(rm = rollmean(Yes, 4)) |>
+        mutate(date = rep(prop_table$date[1:17], 8)) |>
+        ggplot() +
+        geom_line(aes(date, rm, colour = area), se = FALSE) +
+        labs(title = "Proportion of resistant E.coli specimens \nby Quarter and Area",
+             x = "Quarter",
+             y = "Proportion") +
+        ggthemes::theme_economist() +
+        scale_y_continuous(labels = scales::percent, position = "right") +
+        theme(title = element_text(size = 9))
+    
+    prop_table |>
+        group_by(date) |>
+        ggplot() +
+        geom_boxplot(aes(factor(date), Yes)) +
+        labs(title = "Inter-area variation in resistant E.coli specimens by Quarter",
+             x = "Quarter",
+             y = "Proportion") +
+        ggthemes::theme_economist() +
+        scale_y_continuous(labels = scales::percent, position = "right") +
+        scale_x_discrete(waiver()) +
+        theme(title = element_text(size = 9), 
+              axis.text.x = element_text(angle = 90, hjust = 0))
+        
+```
+
+### Illustration #2: Tobacco smoking
+
+```{r}
+#| label: fig-smoking
+#| fig-cap: "Trends in smoking by age and sex"
+
+smoking <- read_csv("/Users/julianflowers/Downloads/epi_input_data_Smoking-Prevalence_gbd_2021.csv")
+
+smoking_sa <- smoking |> 
+    filter(location_name == "Saudi Arabia")
+
+smok_wide <- smoking_sa |>
+    select(year_start, sex, age_start, sample_size, mean, lower, upper)
+
+#smoking_sa$field_citation_value |> unique()
+
+smok_wide |>
+    ggplot() +
+    geom_point(aes(year_start, mean, size = sample_size, colour = factor(age_start))) +
+    geom_smooth(aes(year_start, mean, colour = factor(age_start)), method = "lm", se = FALSE) + facet_wrap(~ sex) +
+        ggthemes::theme_economist() +
+        scale_y_continuous(labels = scales::percent, position = "right") +
+    theme(legend.text = element_text(size = 6), 
+          legend.title = element_text(size = 7), 
+          title = element_text(size = 9)) +
+    labs(x = "Year", y = "Smoking prevalence estimate", 
+         caption = "Sources: AFESD; WHO", 
+         title = "Trend in age-sex-specific prevalence of smoking in Saudi Arabia")
+
+
+```
+
+I have extracted smoking prevalence estimates for Saudi Arabia from the [GBD Epi VIsualisation Tool](https://vizhub.healthdata.org/epi/). This contains prevalence estimates for smoking by sex and age for `r smoking_sa$year_start |> unique()`. The main sources for these estimates are the Saudi Arabia Family Health Survey 1996-1997, Saudi Arabia Global Youth Tobacco Survey 2007 and 2010, WHO Report on the Global Tobacco Epidemic 2019.
+
+The latest estimates from this source are now 10 years out of date but suggested that smoking prevalence in women was declining and was generally below 5% whereas in men, prevalence was generally increasing especially in younger age groups but with a wide variation between age groups (see @fig-smoking).
+
+The more contemporary Saudi-PURE study (2012 - 2015) - a household survey based in Riyadh and central Saudi Arabia, found smoking prevalence in 35-70 year olds of 21% and 4% in men and women respectively [@Alhabib2020].
+
+### Interpreting change
 
 If we find a difference in an indicator value between two points in time, or between two population units, there are three potential explanations:
 
@@ -259,7 +411,7 @@ For some metrics may take many years to develop meaningful trends
 
 ### Policy analysis
 
-In an ideal world we would devise metrics which responded quickly to policy change in order to give rapid feedback on whether our interventions are working. We need to be able to understand the counter-factual  - what would have happened without intervention.
+In an ideal world we would devise metrics which responded quickly to policy change in order to give rapid feedback on whether our interventions are working. We need to be able to understand the counter-factual - what would have happened without intervention.
 
 | Question               | Comparison | Analysis |
 |------------------------|------------|----------|
@@ -269,76 +421,4 @@ In an ideal world we would devise metrics which responded quickly to policy chan
 |                        |            |          |
 |                        |            |          |
 
-## Regional  variation
-
-There are x regional sub-divisions within Saudi Arabia. Variation in health metrics or outcomes
-
-```{r}
-#| label: fig-sim
-#| fig-cap: "Simulated data"
-
-
-library(zoo)
-    
-    # Set seed for reproducibility
-    set.seed(123)
-    
-    # Number of observations
-    n <- 10000
-    
-    # Generate the area variable with five categories
-    areas <- c("Area1", "Area2", "Area3", "Area4", "Area5")
-    area <- sample(areas, size = n, replace = TRUE)
-    
-    # Generate the quarterly dates
-    start_date <- ymd("2019-01-01")
-    end_date <- ymd("2023-12-31")
-    quarterly_dates <- seq.Date(start_date, end_date, by = "quarter")
-    
-    # Create a data frame to ensure proportions
-    synthetic_data <- expand.grid(
-        area = areas,
-        date = quarterly_dates
-    ) %>%
-        slice(rep(1:n(), each = n / length(unique(quarterly_dates)) / length(areas))) %>%
-        mutate(
-            test = case_when(
-                area == "Area1" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.8, 0.2)),
-                area == "Area2" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.75, 0.25)),
-                area == "Area3" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.7, 0.3)),
-                area == "Area4" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.6, 0.4)),
-                area == "Area5" ~ sample(c("Yes", "No"), size = n(), replace = TRUE, prob = c(0.5, 0.5))
-            )
-        )
-    
-    # Adjust the number of rows to match n
-    synthetic_data <- synthetic_data %>% sample_n(n)
-    
-    # Add an ID column
-    synthetic_data <- synthetic_data %>% mutate(id = row_number())
-    
-    # Check proportions
-    prop_table <- synthetic_data %>%
-        group_by(area, date, test) %>%
-        summarize(count = n()) %>%
-        mutate(proportion = count / sum(count)) |>
-        select(-count) |>
-        pivot_wider(names_from = test, values_from = proportion) |>
-        ungroup() 
-    
-    prop_table |>
-        group_by(area) |>
-        reframe(rm = rollmean(Yes, 4)) |>
-        mutate(date = rep(prop_table$date[1:17], 5)) |>
-        ggplot() +
-        geom_line(aes(date, rm, colour = area), se = FALSE) +
-        labs(title = "Proportion of resistant E.coli specimens \nby Quarter and Area",
-             x = "Quarter",
-             y = "Proportion") +
-        ggthemes::theme_economist() +
-        scale_y_continuous(labels = scales::percent, position = "right") +
-        theme(title = element_text(size = 9))
-        
-            
-
-```
+### 

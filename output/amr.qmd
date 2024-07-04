@@ -1,0 +1,202 @@
+---
+title: "AMR"
+format: 
+    html:
+       toc: true
+       toc-location: right
+       code-fold: true
+       code-tools: true
+editor: visual
+execute: 
+  message: false
+  warning: false
+---
+
+## 
+
+```{r}
+#| label: setup
+#| include: false
+
+
+needs(tidyverse, data.table, googledrive, readxl, skimr, janitor, gt, gtsummary, collapsibleTree)
+
+dir <- here::here("~/spha/data/fwdatastrategypocpublichealthframeworkindicators")
+
+dir
+
+```
+
+### Metadata
+
+```{r}
+#| label: metadata
+
+excel_sheets(paste0(dir, "/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
+
+
+meta <- read_xlsx(paste0(dir, "/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
+
+
+
+
+```
+
+### AMR
+
+#### Descriptives
+
+```{r}
+#| label: tobacco
+
+amr <- read_xlsx(paste0(dir, "/AMR 2022 POC.xlsx")) |> janitor::clean_names() |> setDT()
+
+skim(amr)
+
+```
+
+```{r}
+#| label: pathogens
+
+
+amr[, .N, by = .(pathogen_name)]
+
+
+
+```
+
+##### Data cleaning
+
+Resistance variables have different formats - make longer - check missingness
+
+```{r}
+#| label: long resistance and convert logical to character
+
+## drop hashed variables
+
+amr <- amr |>
+    select(-contains("sample"), -first_name, -second_name, -family_name, -patient_mrn, -national_iqama_id, -nationality) |>
+    mutate_if(is.logical, as.character)
+
+
+amr |>
+    mutate_all(\(x) mean(is.na(x))) |>
+    distinct()
+
+
+```
+
+Remove completely missing
+
+```{r}
+#| label: impute and remove
+
+amr_no_empty <- remove_empty(amr)
+
+amr_longer <- amr_no_empty |>
+    pivot_longer(names_to = "antibiotic", values_to = "resistance", cols = ampicillin:colistin)
+
+```
+
+xtabs - three way contingency table on antibiotic, resistance and organism, test with Mantel-Haenszel Chi-Sq test.
+
+```{r}
+#| label: cross tabs
+
+amr_freq <- amr_longer |> count(pathogen_name, antibiotic, resistance) 
+    
+three_way_table <- xtabs(n ~ antibiotic + resistance + pathogen_name, data = amr_freq)
+
+broom::tidy(mantelhaen.test(three_way_table))
+
+```
+
+### Smoking
+
+```{r}
+#| label: smoking
+
+smoking <-  fread(paste0(dir, "/Smoking 2022.csv"))
+
+smoking |>
+    skim()
+
+```
+
+```{r}
+#| label: fig-smok-rate
+#| fig-cap: Gender specific attendance rates for smokers
+
+
+## create five year age bands
+smoking <- smoking[, age_band := cut(age, breaks = seq(0, 100, 5), right = FALSE)][] 
+
+## get KSA population in 5 year age-bands 2018 NB terminal age band is 80+
+as_pop <- curl::curl_download("https://www.stats.gov.sa/sites/default/files/population_2018.xlsx", destfile = tempfile()) 
+
+as_pops <- read_xlsx(as_pop, skip = 5) |>
+    select(1, 8:9) |>
+    rename(age_band = 1, male = 2, female = 3)
+
+as_pops <- as_pops |> slice_head(n = 17)
+
+## frequency national counts by age and sex, and collapse terminal age bands
+as_smok <- smoking[, .N, by = .(age_band, patient_gender)] |>
+    pivot_wider(names_from = patient_gender, values_from = N)
+    
+as_smok_80 <- as_smok |>
+    mutate(rowid = row_number()) |>
+    slice(1:16) |> 
+    add_row(data.frame(age_band = "80+", male = 90, female = 11, unknown = 0, rowid = 17))
+    # keep(is.numeric) |>
+    #  map_dbl(\(x) sum(tail(x, 5), na.rm = TRUE))
+
+as_smok_rates <- as_smok_80 |> bind_cols(as_pops) |>
+    mutate(male_rate = male...2 / male...7 * 100000, 
+           female_rate = female...3 / female...8 * 100000)
+
+as_smok_rates |>
+    ggplot() +
+    geom_col(aes(age_band...1, male_rate), fill = "goldenrod") +
+    geom_col(aes(age_band...1, female_rate), fill = "red", position = "dodge")
+    
+```
+
+### Interactive EDA
+
+```{r}
+#| label: fig-smok
+#| fig-cap: Decomposition tree of smoking data by directorate, appointment type, age band and gender
+
+## frequency 
+
+smoking_counts <- smoking[, .N, by = .(directorate_name, appt_type, patient_gender, age_band)][,node := log(N)]
+
+collapsibleTreeSummary(smoking_counts, 
+                       inputId = NULL, 
+                       root = "smokers", 
+                       hierarchy = c("directorate_name", "appt_type", "age_band", "patient_gender"), 
+                       attribute = "N",
+                       fillFun = viridis::plasma, 
+                       maxPercent = 50)
+
+```
+
+```{r}
+#| label: fig-amr
+#| fig-cap: Decomposition tree of AMR samples by pathogen , antibiotic and resistance status
+
+collapsibleTreeSummary(amr_freq, 
+                       inputId = NULL, 
+                       root = "samples", 
+                       hierarchy = c("pathogen_name", "antibiotic", "resistance"), 
+                       attribute = "n",
+                       nodeSize = "n", 
+                       fillFun = viridis::plasma, 
+                       maxPercent = 50)
+
+
+
+
+```
+
