@@ -32,10 +32,10 @@ dir
 ```{r}
 #| label: metadata
 
-excel_sheets(paste0(dir, "/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
+excel_sheets(paste0("/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
 
 
-meta <- read_xlsx(paste0(dir, "/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
+meta <- read_xlsx(paste0("/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"))
 
 
 
@@ -49,7 +49,7 @@ meta <- read_xlsx(paste0(dir, "/Saudi PHA Deliverables Tracker_v0.5_25June2024.x
 ```{r}
 #| label: tobacco
 
-amr <- read_xlsx(paste0(dir, "/AMR 2022 POC.xlsx")) |> janitor::clean_names() |> setDT()
+amr <- read_xlsx("/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/AMR 2022 POC.xlsx") |> janitor::clean_names() |> setDT()
 
 skim(amr)
 
@@ -116,7 +116,7 @@ broom::tidy(mantelhaen.test(three_way_table))
 ```{r}
 #| label: smoking
 
-smoking <-  fread(paste0(dir, "/Smoking 2022.csv"))
+smoking <-  fread("/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Smoking 2022.csv")
 
 smoking |>
     skim()

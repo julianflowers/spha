@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.52">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>AMR</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="amr_files/libs/clipboard/clipboard.min.js"></script>
+<script src="amr_files/libs/quarto-html/quarto.js"></script>
+<script src="amr_files/libs/quarto-html/popper.min.js"></script>
+<script src="amr_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="amr_files/libs/quarto-html/anchor.min.js"></script>
+<link href="amr_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="amr_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="amr_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="amr_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="amr_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="amr_files/libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<script src="amr_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="amr_files/libs/d3-4.10.2/d3.min.js"></script>
+<link href="amr_files/libs/collapsibleTree-0.1.6/collapsibleTree.css" rel="stylesheet">
+<script src="amr_files/libs/collapsibleTree-binding-0.1.8/collapsibleTree.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link active" data-scroll-target="#section"></a>
+  <ul class="collapse">
+  <li><a href="#metadata" id="toc-metadata" class="nav-link" data-scroll-target="#metadata">Metadata</a></li>
+  <li><a href="#amr" id="toc-amr" class="nav-link" data-scroll-target="#amr">AMR</a></li>
+  <li><a href="#smoking" id="toc-smoking" class="nav-link" data-scroll-target="#smoking">Smoking</a></li>
+  <li><a href="#interactive-eda" id="toc-interactive-eda" class="nav-link" data-scroll-target="#interactive-eda">Interactive EDA</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">AMR</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
+<section id="metadata" class="level3">
+<h3 class="anchored" data-anchor-id="metadata">Metadata</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">excel_sheets</span>(<span class="fu">paste0</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Sheet1- Hemant"           "Sheet1"                  
+[3] "Revised timelines"        "Deliverable Tracker_v0.1"</code></pre>
+</div>
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="amr" class="level3">
+<h3 class="anchored" data-anchor-id="amr">AMR</h3>
+<section id="descriptives" class="level4">
+<h4 class="anchored" data-anchor-id="descriptives">Descriptives</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>amr <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/AMR 2022 POC.xlsx"</span>) <span class="sc">|&gt;</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">|&gt;</span> <span class="fu">setDT</span>()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(amr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">amr</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">334</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">38</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">logical</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sample_no</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">patient_mrn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">location</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">patient_hospitalized</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">specific_location</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">community_origin</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">site</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">first_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">second_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">family_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">national_iqama_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">nationality</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">pathogen_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ampicillin</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">oxacillin</td>
+<td style="text-align: right;">253</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cefoxitin</td>
+<td style="text-align: right;">253</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">cefotaxime</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ceftazidime</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ceftriaxone</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cefepime</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">doripenem</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ertapenem</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">imipenem</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">meropenem</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">co_trimoxazole</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ciprofloxacin</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">levofloxacin</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">colistin</td>
+<td style="text-align: right;">81</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: logical</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: left;">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">minocycline</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tigecycline</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">penicillin_g</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">cefixime</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">azithromycin</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">amikacin</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gentamicin</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">spectinomycin</td>
+<td style="text-align: right;">334</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">NaN</td>
+<td style="text-align: left;">:</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 11%">
+<col style="width: 16%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 3%">
+<col style="width: 8%">
+<col style="width: 6%">
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">record_number</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">647.99</td>
+<td style="text-align: right;">385.58</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">295.50</td>
+<td style="text-align: right;">631.5</td>
+<td style="text-align: right;">1013.75</td>
+<td style="text-align: right;">1219</td>
+<td style="text-align: left;">▆▆▆▅▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age_year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">53.30</td>
+<td style="text-align: right;">25.84</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">38.25</td>
+<td style="text-align: right;">58.0</td>
+<td style="text-align: right;">72.00</td>
+<td style="text-align: right;">109</td>
+<td style="text-align: left;">▃▃▇▆▂</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>amr[, .N, by <span class="ot">=</span> .(pathogen_name)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           pathogen_name     N
+                  &lt;char&gt; &lt;int&gt;
+1:      Escherichia coli   146
+2: Staphylococcus aureus   188</code></pre>
+</div>
+</div>
+<section id="data-cleaning" class="level5">
+<h5 class="anchored" data-anchor-id="data-cleaning">Data cleaning</h5>
+<p>Resistance variables have different formats - make longer - check missingness</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## drop hashed variables</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>amr <span class="ot">&lt;-</span> amr <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"sample"</span>), <span class="sc">-</span>first_name, <span class="sc">-</span>second_name, <span class="sc">-</span>family_name, <span class="sc">-</span>patient_mrn, <span class="sc">-</span>national_iqama_id, <span class="sc">-</span>nationality) <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.logical, as.character)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>amr <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_all</span>(\(x) <span class="fu">mean</span>(<span class="fu">is.na</span>(x))) <span class="sc">|&gt;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   record_number location patient_hospitalized specific_location age_year
+           &lt;num&gt;    &lt;num&gt;                &lt;num&gt;             &lt;num&gt;    &lt;num&gt;
+1:             0        0                    0                 0        0
+   community_origin  site pathogen_name minocycline tigecycline ampicillin
+              &lt;num&gt; &lt;num&gt;         &lt;num&gt;       &lt;num&gt;       &lt;num&gt;      &lt;num&gt;
+1:                0     0             0           1           1   0.242515
+   penicillin_g oxacillin cefoxitin cefotaxime ceftazidime ceftriaxone cefixime
+          &lt;num&gt;     &lt;num&gt;     &lt;num&gt;      &lt;num&gt;       &lt;num&gt;       &lt;num&gt;    &lt;num&gt;
+1:            1  0.757485  0.757485   0.242515    0.242515    0.242515        1
+   cefepime doripenem ertapenem imipenem meropenem co_trimoxazole azithromycin
+      &lt;num&gt;     &lt;num&gt;     &lt;num&gt;    &lt;num&gt;     &lt;num&gt;          &lt;num&gt;        &lt;num&gt;
+1: 0.242515  0.242515  0.242515 0.242515  0.242515       0.242515            1
+   amikacin gentamicin ciprofloxacin levofloxacin colistin spectinomycin
+      &lt;num&gt;      &lt;num&gt;         &lt;num&gt;        &lt;num&gt;    &lt;num&gt;         &lt;num&gt;
+1:        1          1      0.242515     0.242515 0.242515             1</code></pre>
+</div>
+</div>
+<p>Remove completely missing</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>amr_no_empty <span class="ot">&lt;-</span> <span class="fu">remove_empty</span>(amr)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>amr_longer <span class="ot">&lt;-</span> amr_no_empty <span class="sc">|&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">"antibiotic"</span>, <span class="at">values_to =</span> <span class="st">"resistance"</span>, <span class="at">cols =</span> ampicillin<span class="sc">:</span>colistin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>xtabs - three way contingency table on antibiotic, resistance and organism, test with Mantel-Haenszel Chi-Sq test.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>amr_freq <span class="ot">&lt;-</span> amr_longer <span class="sc">|&gt;</span> <span class="fu">count</span>(pathogen_name, antibiotic, resistance) </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>three_way_table <span class="ot">&lt;-</span> <span class="fu">xtabs</span>(n <span class="sc">~</span> antibiotic <span class="sc">+</span> resistance <span class="sc">+</span> pathogen_name, <span class="at">data =</span> amr_freq)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">mantelhaen.test</span>(three_way_table))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 4
+  statistic p.value parameter method                      
+      &lt;dbl&gt;   &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;                       
+1     2913.       0        42 Cochran-Mantel-Haenszel test</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="smoking" class="level3">
+<h3 class="anchored" data-anchor-id="smoking">Smoking</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>smoking <span class="ot">&lt;-</span>  <span class="fu">fread</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Smoking 2022.csv"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>smoking <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">skim</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">smoking</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">109441</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Key</td>
+<td style="text-align: left;">NULL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">directorate_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appt_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">appt_code</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">appt_type</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">patient_gender</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">pat_nationality</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Record Number</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">54721.00</td>
+<td style="text-align: right;">31593.04</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">27361</td>
+<td style="text-align: right;">54721</td>
+<td style="text-align: right;">82081</td>
+<td style="text-align: right;">109441</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">age</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">33.98</td>
+<td style="text-align: right;">11.47</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: left;">▁▇▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2022.00</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: right;">2022</td>
+<td style="text-align: left;">▁▁▇▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">## create five year age bands</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>smoking <span class="ot">&lt;-</span> smoking[, age_band <span class="sc">:</span><span class="er">=</span> <span class="fu">cut</span>(age, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">5</span>), <span class="at">right =</span> <span class="cn">FALSE</span>)][] </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## get KSA population in 5 year age-bands 2018 NB terminal age band is 80+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>as_pop <span class="ot">&lt;-</span> curl<span class="sc">::</span><span class="fu">curl_download</span>(<span class="st">"https://www.stats.gov.sa/sites/default/files/population_2018.xlsx"</span>, <span class="at">destfile =</span> <span class="fu">tempfile</span>()) </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>as_pops <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(as_pop, <span class="at">skip =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="dv">1</span>, <span class="dv">8</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">age_band =</span> <span class="dv">1</span>, <span class="at">male =</span> <span class="dv">2</span>, <span class="at">female =</span> <span class="dv">3</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>as_pops <span class="ot">&lt;-</span> as_pops <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">17</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="do">## frequency national counts by age and sex, and collapse terminal age bands</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>as_smok <span class="ot">&lt;-</span> smoking[, .N, by <span class="ot">=</span> .(age_band, patient_gender)] <span class="sc">|&gt;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> patient_gender, <span class="at">values_from =</span> N)</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>as_smok_80 <span class="ot">&lt;-</span> as_smok <span class="sc">|&gt;</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">rowid =</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_row</span>(<span class="fu">data.frame</span>(<span class="at">age_band =</span> <span class="st">"80+"</span>, <span class="at">male =</span> <span class="dv">90</span>, <span class="at">female =</span> <span class="dv">11</span>, <span class="at">unknown =</span> <span class="dv">0</span>, <span class="at">rowid =</span> <span class="dv">17</span>))</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># keep(is.numeric) |&gt;</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  map_dbl(\(x) sum(tail(x, 5), na.rm = TRUE))</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>as_smok_rates <span class="ot">&lt;-</span> as_smok_80 <span class="sc">|&gt;</span> <span class="fu">bind_cols</span>(as_pops) <span class="sc">|&gt;</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">male_rate =</span> male...<span class="dv">2</span> <span class="sc">/</span> male...<span class="dv">7</span> <span class="sc">*</span> <span class="dv">100000</span>, </span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>           <span class="at">female_rate =</span> female...<span class="dv">3</span> <span class="sc">/</span> female...<span class="dv">8</span> <span class="sc">*</span> <span class="dv">100000</span>)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>as_smok_rates <span class="sc">|&gt;</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(age_band...<span class="dv">1</span>, male_rate), <span class="at">fill =</span> <span class="st">"goldenrod"</span>) <span class="sc">+</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(age_band...<span class="dv">1</span>, female_rate), <span class="at">fill =</span> <span class="st">"red"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-smok-rate" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-smok-rate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="amr_files/figure-html/fig-smok-rate-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smok-rate-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Gender specific attendance rates for smokers
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interactive-eda" class="level3">
+<h3 class="anchored" data-anchor-id="interactive-eda">Interactive EDA</h3>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## frequency </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>smoking_counts <span class="ot">&lt;-</span> smoking[, .N, by <span class="ot">=</span> .(directorate_name, appt_type, patient_gender, age_band)][,node <span class="sc">:</span><span class="er">=</span> <span class="fu">log</span>(N)]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">collapsibleTreeSummary</span>(smoking_counts, </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">inputId =</span> <span class="cn">NULL</span>, </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">root =</span> <span class="st">"smokers"</span>, </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">hierarchy =</span> <span class="fu">c</span>(<span class="st">"directorate_name"</span>, <span class="st">"appt_type"</span>, <span class="st">"age_band"</span>, <span class="st">"patient_gender"</span>), </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">attribute =</span> <span class="st">"N"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fillFun =</span> viridis<span class="sc">::</span>plasma, </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">maxPercent =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-smok" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-smok-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="collapsibleTree html-widget html-fill-item" id="htmlwidget-7a993d79415dfde4ebb3" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-7a993d79415dfde4ebb3">{"x":{"data":{"name":"smokers","fill":"#0D0887FF","WeightOfNode":"109,441","children":[{"name":"Riyadh","fill":"#BE3885FF","WeightOfNode":"29,617","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"28,828","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"17,291","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"16,375"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"915"},{"name":"unknown","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"[40,45)","fill":"#B93289FF","WeightOfNode":"8,124","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"7,536"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"588"}]},{"name":"[20,25)","fill":"#FCA537FF","WeightOfNode":"2,905","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,748"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"157"}]},{"name":"[70,75)","fill":"#F3F027FF","WeightOfNode":"278","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"261"},{"name":"female","fill":"#FDC527FF","WeightOfNode":"17"}]},{"name":"[75,80)","fill":"#F3F027FF","WeightOfNode":"159","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"148"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"11"}]},{"name":"[35,40)","fill":"#F0F921FF","WeightOfNode":"37","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"37"}]},{"name":"[45,50)","fill":"#F0F921FF","WeightOfNode":"34","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"31"},{"name":"female","fill":"#FDAC33FF","WeightOfNode":"3"}]}]},{"name":"WALKIN","fill":"#F9DE25FF","WeightOfNode":"780","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"409","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"329"},{"name":"female","fill":"#DF6263FF","WeightOfNode":"80"}]},{"name":"[20,25)","fill":"#CD4A76FF","WeightOfNode":"184","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"151"},{"name":"female","fill":"#E76E5BFF","WeightOfNode":"33"}]},{"name":"[40,45)","fill":"#D25071FF","WeightOfNode":"180","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"123"},{"name":"female","fill":"#A11A9CFF","WeightOfNode":"57"}]},{"name":"[35,40)","fill":"#F3F027FF","WeightOfNode":"6","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"6"}]},{"name":"[45,50)","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"female","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"REFERRAL","fill":"#F0F921FF","WeightOfNode":"8","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"4","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"}]},{"name":"[20,25)","fill":"#7401A8FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]},{"name":"[70,75)","fill":"#F9963FFF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Jeddah","fill":"#F9963FFF","WeightOfNode":"13,515","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"12,812","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"6,311","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"5,524"},{"name":"female","fill":"#F9963FFF","WeightOfNode":"787"}]},{"name":"[30,35)","fill":"#E76E5BFF","WeightOfNode":"2,356","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,091"},{"name":"female","fill":"#FA9E3BFF","WeightOfNode":"265"}]},{"name":"[20,25)","fill":"#EE7B51FF","WeightOfNode":"2,054","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,826"},{"name":"female","fill":"#FA9E3BFF","WeightOfNode":"227"},{"name":"unknown","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"[40,45)","fill":"#FCA537FF","WeightOfNode":"1,271","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,073"},{"name":"female","fill":"#EE7B51FF","WeightOfNode":"198"}]},{"name":"[45,50)","fill":"#FCCD25FF","WeightOfNode":"682","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"556"},{"name":"female","fill":"#E76E5BFF","WeightOfNode":"126"}]},{"name":"[80,85)","fill":"#F3F027FF","WeightOfNode":"75","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"65"},{"name":"female","fill":"#F68F44FF","WeightOfNode":"10"}]},{"name":"[75,80)","fill":"#F0F921FF","WeightOfNode":"48","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"43"},{"name":"female","fill":"#FCA537FF","WeightOfNode":"5"}]},{"name":"[15,20)","fill":"#F0F921FF","WeightOfNode":"10","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"10"}]},{"name":"[85,90)","fill":"#F0F921FF","WeightOfNode":"4","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"}]},{"name":"male","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"WALKIN","fill":"#FCCD25FF","WeightOfNode":"703","children":[{"name":"[35,40)","fill":"#6C00A8FF","WeightOfNode":"274","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"232"},{"name":"female","fill":"#F1814DFF","WeightOfNode":"42"}]},{"name":"[45,50)","fill":"#C43E7FFF","WeightOfNode":"185","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"107"},{"name":"female","fill":"#5402A3FF","WeightOfNode":"78"}]},{"name":"[20,25)","fill":"#E76E5BFF","WeightOfNode":"130","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"98"},{"name":"female","fill":"#C9447AFF","WeightOfNode":"32"}]},{"name":"[30,35)","fill":"#FA9E3BFF","WeightOfNode":"76","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"72"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"4"}]},{"name":"[40,45)","fill":"#FCCD25FF","WeightOfNode":"35","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"21"},{"name":"female","fill":"#6400A7FF","WeightOfNode":"14"}]},{"name":"[80,85)","fill":"#F0F921FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"[75,80)","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Eastern","fill":"#F9963FFF","WeightOfNode":"13,266","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"13,174","children":[{"name":"[30,35)","fill":"#8B0AA5FF","WeightOfNode":"4,607","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4,407"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"200"}]},{"name":"[35,40)","fill":"#920FA3FF","WeightOfNode":"4,460","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4,311"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"149"}]},{"name":"[25,30)","fill":"#EB7557FF","WeightOfNode":"2,291","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,194"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"97"}]},{"name":"[20,25)","fill":"#FA9E3BFF","WeightOfNode":"1,390","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,292"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"98"}]},{"name":"[45,50)","fill":"#F6E726FF","WeightOfNode":"324","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"306"},{"name":"female","fill":"#FDC527FF","WeightOfNode":"18"}]},{"name":"[40,45)","fill":"#F3F027FF","WeightOfNode":"102","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"99"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]}]},{"name":"WALKIN","fill":"#F0F921FF","WeightOfNode":"40","children":[{"name":"[45,50)","fill":"#0D0887FF","WeightOfNode":"32","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"24"},{"name":"female","fill":"#C9447AFF","WeightOfNode":"8"}]},{"name":"[30,35)","fill":"#FCA537FF","WeightOfNode":"4","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"},{"name":"female","fill":"#C9447AFF","WeightOfNode":"1"}]},{"name":"[20,25)","fill":"#FCCD25FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"[25,30)","fill":"#F6E726FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]},{"name":"[35,40)","fill":"#F6E726FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"REFERRAL","fill":"#F0F921FF","WeightOfNode":"31","children":[{"name":"[30,35)","fill":"#A11A9CFF","WeightOfNode":"10","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"8"},{"name":"female","fill":"#DF6263FF","WeightOfNode":"2"}]},{"name":"[35,40)","fill":"#B32C8EFF","WeightOfNode":"9","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"9"}]},{"name":"[25,30)","fill":"#E3685FFF","WeightOfNode":"6","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"6"}]},{"name":"[20,25)","fill":"#EE7B51FF","WeightOfNode":"5","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"5"}]},{"name":"[45,50)","fill":"#F9DE25FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"21","children":[{"name":"[35,40)","fill":"#1B068DFF","WeightOfNode":"10","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"9"},{"name":"female","fill":"#FCA537FF","WeightOfNode":"1"}]},{"name":"[45,50)","fill":"#CD4A76FF","WeightOfNode":"5","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"},{"name":"female","fill":"#6400A7FF","WeightOfNode":"2"}]},{"name":"[20,25)","fill":"#F48849FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]},{"name":"[30,35)","fill":"#FCA537FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"[25,30)","fill":"#FCCD25FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Tabuk","fill":"#FEBC2AFF","WeightOfNode":"7,759","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"6,527","children":[{"name":"[45,50)","fill":"#3A049AFF","WeightOfNode":"2,910","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,804"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"106"}]},{"name":"[30,35)","fill":"#43039EFF","WeightOfNode":"2,897","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,750"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"147"}]},{"name":"[20,25)","fill":"#FA9E3BFF","WeightOfNode":"720","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"704"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"16"}]}]},{"name":"WALKIN","fill":"#EE7B51FF","WeightOfNode":"1,232","children":[{"name":"[45,50)","fill":"#0D0887FF","WeightOfNode":"671","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"632"},{"name":"female","fill":"#FDC527FF","WeightOfNode":"39"}]},{"name":"[30,35)","fill":"#6C00A8FF","WeightOfNode":"479","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"351"},{"name":"female","fill":"#BE3885FF","WeightOfNode":"128"}]},{"name":"[20,25)","fill":"#FDC527FF","WeightOfNode":"71","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"71"}]},{"name":"[40,45)","fill":"#F3F027FF","WeightOfNode":"11","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"11"}]}]}]},{"name":"Makkah","fill":"#FDC527FF","WeightOfNode":"7,070","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"6,433","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"4,425","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3,978"},{"name":"female","fill":"#FCA537FF","WeightOfNode":"447"}]},{"name":"[40,45)","fill":"#E3685FFF","WeightOfNode":"1,238","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,127"},{"name":"female","fill":"#FDAC33FF","WeightOfNode":"111"}]},{"name":"[50,55)","fill":"#FDAC33FF","WeightOfNode":"547","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"510"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"37"}]},{"name":"[35,40)","fill":"#F6E726FF","WeightOfNode":"115","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"103"},{"name":"female","fill":"#FCA537FF","WeightOfNode":"12"}]},{"name":"[45,50)","fill":"#F6E726FF","WeightOfNode":"108","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"100"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"8"}]}]},{"name":"WALKIN","fill":"#FDAC33FF","WeightOfNode":"631","children":[{"name":"[50,55)","fill":"#0D0887FF","WeightOfNode":"529","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"516"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"13"}]},{"name":"[30,35)","fill":"#EE7B51FF","WeightOfNode":"102","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"94"},{"name":"female","fill":"#FDB42FFF","WeightOfNode":"8"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"6","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"6","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"6"}]}]}]},{"name":"Madinah","fill":"#FDC527FF","WeightOfNode":"6,956","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"6,898","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"3,518","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3,391"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"127"}]},{"name":"[55,60)","fill":"#EE7B51FF","WeightOfNode":"1,075","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,018"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"57"}]},{"name":"[40,45)","fill":"#FEBC2AFF","WeightOfNode":"504","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"486"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"18"}]},{"name":"[65,70)","fill":"#FEBC2AFF","WeightOfNode":"501","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"488"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"13"}]},{"name":"[20,25)","fill":"#FEBC2AFF","WeightOfNode":"458","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"428"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"30"}]},{"name":"[35,40)","fill":"#FDC527FF","WeightOfNode":"424","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"409"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"15"}]},{"name":"[45,50)","fill":"#FCCD25FF","WeightOfNode":"321","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"297"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"24"}]},{"name":"[70,75)","fill":"#F3F027FF","WeightOfNode":"97","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"94"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]}]},{"name":"WALKIN","fill":"#F3F027FF","WeightOfNode":"50","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"29","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"18"},{"name":"female","fill":"#7401A8FF","WeightOfNode":"11"}]},{"name":"[30,35)","fill":"#D7566CFF","WeightOfNode":"11","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"9"},{"name":"female","fill":"#E76E5BFF","WeightOfNode":"2"}]},{"name":"[55,60)","fill":"#FDB42FFF","WeightOfNode":"4","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"}]},{"name":"[65,70)","fill":"#FDC527FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]},{"name":"[40,45)","fill":"#FBD524FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"[20,25)","fill":"#F6E726FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"7","children":[{"name":"[30,35)","fill":"#4B03A1FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"},{"name":"female","fill":"#99159FFF","WeightOfNode":"1"}]},{"name":"[70,75)","fill":"#B32C8EFF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"[20,25)","fill":"#F48849FF","WeightOfNode":"1","children":[{"name":"female","fill":"#0D0887FF","WeightOfNode":"1"}]},{"name":"[45,50)","fill":"#F48849FF","WeightOfNode":"1","children":[{"name":"female","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"REFERRAL","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Asir","fill":"#FDC527FF","WeightOfNode":"6,181","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"5,338","children":[{"name":"[50,55)","fill":"#0D0887FF","WeightOfNode":"2,699","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,656"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"43"}]},{"name":"[15,20)","fill":"#4B03A1FF","WeightOfNode":"2,282","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,255"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"27"}]},{"name":"[10,15)","fill":"#FDC527FF","WeightOfNode":"321","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"317"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"4"}]},{"name":"[25,30)","fill":"#F0F921FF","WeightOfNode":"21","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"20"},{"name":"female","fill":"#FCCD25FF","WeightOfNode":"1"}]},{"name":"[45,50)","fill":"#F0F921FF","WeightOfNode":"14","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"14"}]},{"name":"[5,10)","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"WALKIN","fill":"#F48849FF","WeightOfNode":"841","children":[{"name":"[15,20)","fill":"#0D0887FF","WeightOfNode":"501","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"489"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"12"}]},{"name":"[50,55)","fill":"#8B0AA5FF","WeightOfNode":"297","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"296"},{"name":"female","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"[10,15)","fill":"#FCCD25FF","WeightOfNode":"39","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"38"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"1"}]},{"name":"[45,50)","fill":"#F0F921FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]},{"name":"[25,30)","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"2","children":[{"name":"[50,55)","fill":"#0D0887FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]}]}]},{"name":"AlAhsa","fill":"#FBD524FF","WeightOfNode":"4,591","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"4,442","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"2,300","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,234"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"66"}]},{"name":"[60,65)","fill":"#99159FFF","WeightOfNode":"1,465","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,449"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"16"}]},{"name":"[65,70)","fill":"#F48849FF","WeightOfNode":"614","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"613"},{"name":"female","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"[35,40)","fill":"#F3F027FF","WeightOfNode":"62","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"60"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"2"}]},{"name":"[15,20)","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"WALKIN","fill":"#F9DE25FF","WeightOfNode":"146","children":[{"name":"[60,65)","fill":"#0D0887FF","WeightOfNode":"79","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"76"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"3"}]},{"name":"[20,25)","fill":"#BE3885FF","WeightOfNode":"39","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"34"},{"name":"female","fill":"#F68F44FF","WeightOfNode":"5"}]},{"name":"[65,70)","fill":"#E76E5BFF","WeightOfNode":"27","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"27"}]},{"name":"[35,40)","fill":"#F3F027FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"3","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]}]}]},{"name":"Jazan","fill":"#F9DE25FF","WeightOfNode":"3,271","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"3,069","children":[{"name":"[15,20)","fill":"#0D0887FF","WeightOfNode":"2,355","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,268"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"87"}]},{"name":"[60,65)","fill":"#F9963FFF","WeightOfNode":"353","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"340"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"13"}]},{"name":"[20,25)","fill":"#FCA537FF","WeightOfNode":"309","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"298"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"11"}]},{"name":"[40,45)","fill":"#F6E726FF","WeightOfNode":"50","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"49"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"1"}]},{"name":"[55,60)","fill":"#F0F921FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]}]},{"name":"WALKIN","fill":"#FDC527FF","WeightOfNode":"196","children":[{"name":"[15,20)","fill":"#0D0887FF","WeightOfNode":"134","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"108"},{"name":"female","fill":"#E3685FFF","WeightOfNode":"26"}]},{"name":"[20,25)","fill":"#C43E7FFF","WeightOfNode":"51","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"34"},{"name":"female","fill":"#99159FFF","WeightOfNode":"17"}]},{"name":"[40,45)","fill":"#F9DE25FF","WeightOfNode":"6","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"},{"name":"female","fill":"#99159FFF","WeightOfNode":"2"}]},{"name":"[60,65)","fill":"#F9DE25FF","WeightOfNode":"5","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"5"}]}]},{"name":"REFERRAL","fill":"#F0F921FF","WeightOfNode":"5","children":[{"name":"[15,20)","fill":"#0D0887FF","WeightOfNode":"5","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"},{"name":"female","fill":"#DF6263FF","WeightOfNode":"1"}]}]},{"name":"FOLLOW_UP","fill":"#F0F921FF","WeightOfNode":"1","children":[{"name":"[60,65)","fill":"#0D0887FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Taif","fill":"#F9DE25FF","WeightOfNode":"3,257","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"2,794","children":[{"name":"[30,35)","fill":"#270591FF","WeightOfNode":"1,322","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,233"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"89"}]},{"name":"[55,60)","fill":"#A11A9CFF","WeightOfNode":"887","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"861"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"26"}]},{"name":"[35,40)","fill":"#DB5C68FF","WeightOfNode":"585","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"581"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"4"}]}]},{"name":"WALKIN","fill":"#F68F44FF","WeightOfNode":"430","children":[{"name":"[55,60)","fill":"#0D0887FF","WeightOfNode":"391","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"382"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"9"}]},{"name":"[30,35)","fill":"#FEBC2AFF","WeightOfNode":"28","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"21"},{"name":"female","fill":"#C9447AFF","WeightOfNode":"7"}]},{"name":"[35,40)","fill":"#F9DE25FF","WeightOfNode":"11","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"11"}]}]},{"name":"FOLLOW_UP","fill":"#F3F027FF","WeightOfNode":"33","children":[{"name":"[55,60)","fill":"#0D0887FF","WeightOfNode":"33","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"32"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"1"}]}]}]},{"name":"Qassim","fill":"#F9DE25FF","WeightOfNode":"2,913","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"2,892","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"1,724","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,706"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"18"}]},{"name":"[45,50)","fill":"#6C00A8FF","WeightOfNode":"1,139","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,113"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"26"}]},{"name":"[5,10)","fill":"#F3F027FF","WeightOfNode":"20","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"20"}]},{"name":"[0,5)","fill":"#F0F921FF","WeightOfNode":"9","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"9"}]}]},{"name":"WALKIN","fill":"#F3F027FF","WeightOfNode":"21","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"20","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"16"},{"name":"female","fill":"#DF6263FF","WeightOfNode":"4"}]},{"name":"[45,50)","fill":"#FCCD25FF","WeightOfNode":"1","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1"}]}]}]},{"name":"Hafer AlBatin","fill":"#F9DE25FF","WeightOfNode":"2,839","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"2,643","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"2,609","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2,555"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"54"}]},{"name":"[20,25)","fill":"#F3F027FF","WeightOfNode":"17","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"17"}]},{"name":"[45,50)","fill":"#F3F027FF","WeightOfNode":"17","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"17"}]}]},{"name":"WALKIN","fill":"#FBD524FF","WeightOfNode":"103","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"103","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"100"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]}]},{"name":"FOLLOW_UP","fill":"#F9DE25FF","WeightOfNode":"93","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"93","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"90"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]}]}]},{"name":"Hail","fill":"#F3F027FF","WeightOfNode":"1,477","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"1,477","children":[{"name":"[35,40)","fill":"#0D0887FF","WeightOfNode":"1,477","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"1,455"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"22"}]}]}]},{"name":"Najran","fill":"#F3F027FF","WeightOfNode":"1,392","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"1,329","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"1,026","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"966"},{"name":"female","fill":"#FDC527FF","WeightOfNode":"60"}]},{"name":"[45,50)","fill":"#D25071FF","WeightOfNode":"303","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"300"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"3"}]}]},{"name":"WALKIN","fill":"#FCCD25FF","WeightOfNode":"63","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"63","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"41"},{"name":"female","fill":"#8B0AA5FF","WeightOfNode":"22"}]}]}]},{"name":"Jouf","fill":"#F3F027FF","WeightOfNode":"1,366","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"1,324","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"715","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"703"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"12"}]},{"name":"[50,55)","fill":"#C9447AFF","WeightOfNode":"331","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"330"},{"name":"female","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"[55,60)","fill":"#DB5C68FF","WeightOfNode":"278","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"274"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"4"}]}]},{"name":"WALKIN","fill":"#F9DE25FF","WeightOfNode":"42","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"39","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"28"},{"name":"female","fill":"#B93289FF","WeightOfNode":"11"}]},{"name":"[50,55)","fill":"#FEBC2AFF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]}]}]},{"name":"Baha","fill":"#F3F027FF","WeightOfNode":"1,272","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"1,118","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"854","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"838"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"16"}]},{"name":"[35,40)","fill":"#F48849FF","WeightOfNode":"151","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"151"}]},{"name":"[25,30)","fill":"#FDB42FFF","WeightOfNode":"86","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"86"}]},{"name":"[40,45)","fill":"#F6E726FF","WeightOfNode":"27","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"27"}]}]},{"name":"WALKIN","fill":"#F9963FFF","WeightOfNode":"154","children":[{"name":"[20,25)","fill":"#0D0887FF","WeightOfNode":"123","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"115"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"8"}]},{"name":"[35,40)","fill":"#FCA537FF","WeightOfNode":"16","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"13"},{"name":"female","fill":"#E3685FFF","WeightOfNode":"3"}]},{"name":"[40,45)","fill":"#FDC527FF","WeightOfNode":"9","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"8"},{"name":"female","fill":"#FA9E3BFF","WeightOfNode":"1"}]},{"name":"[25,30)","fill":"#FBD524FF","WeightOfNode":"6","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"6"}]}]}]},{"name":"Qurayyat","fill":"#F3F027FF","WeightOfNode":"1,012","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"883","children":[{"name":"[5,10)","fill":"#0D0887FF","WeightOfNode":"446","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"427"},{"name":"female","fill":"#FBD524FF","WeightOfNode":"19"}]},{"name":"[0,5)","fill":"#43039EFF","WeightOfNode":"385","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"372"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"13"}]},{"name":"[45,50)","fill":"#FBD524FF","WeightOfNode":"33","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"30"},{"name":"female","fill":"#FDAC33FF","WeightOfNode":"3"}]},{"name":"[85,90)","fill":"#F3F027FF","WeightOfNode":"13","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"12"},{"name":"female","fill":"#FDB42FFF","WeightOfNode":"1"}]},{"name":"[90,95)","fill":"#F0F921FF","WeightOfNode":"3","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"3"}]},{"name":"[95,100)","fill":"#F0F921FF","WeightOfNode":"2","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"2"}]},{"name":"male","fill":"#F0F921FF","WeightOfNode":"1"}]},{"name":"WALKIN","fill":"#F68F44FF","WeightOfNode":"129","children":[{"name":"[5,10)","fill":"#0D0887FF","WeightOfNode":"107","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"104"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]},{"name":"[0,5)","fill":"#EB7557FF","WeightOfNode":"22","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"17"},{"name":"female","fill":"#D25071FF","WeightOfNode":"5"}]}]}]},{"name":"Bisha","fill":"#F3F027FF","WeightOfNode":"723","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"570","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"570","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"566"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"4"}]}]},{"name":"WALKIN","fill":"#DB5C68FF","WeightOfNode":"153","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"153","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"151"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"2"}]}]}]},{"name":"Qunfotha","fill":"#F0F921FF","WeightOfNode":"494","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"468","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"468","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"458"},{"name":"female","fill":"#F6E726FF","WeightOfNode":"10"}]}]},{"name":"WALKIN","fill":"#FCCD25FF","WeightOfNode":"26","children":[{"name":"[30,35)","fill":"#0D0887FF","WeightOfNode":"26","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"23"},{"name":"female","fill":"#F9963FFF","WeightOfNode":"3"}]}]}]},{"name":"Northern Borders","fill":"#F0F921FF","WeightOfNode":"470","children":[{"name":"REGULAR","fill":"#0D0887FF","WeightOfNode":"412","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"280","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"277"},{"name":"female","fill":"#F3F027FF","WeightOfNode":"3"}]},{"name":"[45,50)","fill":"#B93289FF","WeightOfNode":"117","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"114"},{"name":"female","fill":"#F9DE25FF","WeightOfNode":"3"}]},{"name":"[20,25)","fill":"#FBD524FF","WeightOfNode":"15","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"14"},{"name":"female","fill":"#FEBC2AFF","WeightOfNode":"1"}]}]},{"name":"WALKIN","fill":"#F9963FFF","WeightOfNode":"58","children":[{"name":"[25,30)","fill":"#0D0887FF","WeightOfNode":"41","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"41"}]},{"name":"[45,50)","fill":"#D7566CFF","WeightOfNode":"13","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"13"}]},{"name":"[20,25)","fill":"#FEBC2AFF","WeightOfNode":"4","children":[{"name":"male","fill":"#0D0887FF","WeightOfNode":"4"}]}]}]}]},"options":{"hierarchy":["directorate_name","appt_type","age_band","patient_gender"],"input":null,"attribute":"N","linkLength":null,"fontSize":10,"tooltip":true,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":60,"right":60}}},"evals":[],"jsHooks":[]}</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-smok-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Decomposition tree of smoking data by directorate, appointment type, age band and gender
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">collapsibleTreeSummary</span>(amr_freq, </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">inputId =</span> <span class="cn">NULL</span>, </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">root =</span> <span class="st">"samples"</span>, </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">hierarchy =</span> <span class="fu">c</span>(<span class="st">"pathogen_name"</span>, <span class="st">"antibiotic"</span>, <span class="st">"resistance"</span>), </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">attribute =</span> <span class="st">"n"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">nodeSize =</span> <span class="st">"n"</span>, </span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fillFun =</span> viridis<span class="sc">::</span>plasma, </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">maxPercent =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="fig-amr" class="cell-output-display quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-amr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="collapsibleTree html-widget html-fill-item" id="htmlwidget-bac7f6e2eba8f6e46c96" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-bac7f6e2eba8f6e46c96">{"x":{"data":{"name":"samples","fill":"#0D0887FF","SizeOfNode":61.64,"WeightOfNode":"1,559","children":[{"name":"Staphylococcus aureus","fill":"#0D0887FF","SizeOfNode":50.25,"WeightOfNode":"1,036","children":[{"name":"ampicillin","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":14.97,"WeightOfNode":"92"},{"name":"S","fill":"#B93289FF","SizeOfNode":9.369999999999999,"WeightOfNode":"36"}]},{"name":"cefepime","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":12.78,"WeightOfNode":"67"},{"name":"R","fill":"#43039EFF","SizeOfNode":11.68,"WeightOfNode":"56"},{"name":"I","fill":"#F6E726FF","SizeOfNode":2.7,"WeightOfNode":"3"},{"name":"NA","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"cefotaxime","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"R","fill":"#8405A7FF","SizeOfNode":10.59,"WeightOfNode":"46"},{"name":"NA","fill":"#920FA3FF","SizeOfNode":10.24,"WeightOfNode":"43"},{"name":"S","fill":"#AD2793FF","SizeOfNode":9.75,"WeightOfNode":"39"}]},{"name":"ceftazidime","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":12.97,"WeightOfNode":"69"},{"name":"S","fill":"#300597FF","SizeOfNode":11.99,"WeightOfNode":"59"}]},{"name":"ceftriaxone","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"R","fill":"#1B068DFF","SizeOfNode":12.29,"WeightOfNode":"62"},{"name":"S","fill":"#5C01A6FF","SizeOfNode":11.26,"WeightOfNode":"52"},{"name":"NA","fill":"#FA9E3BFF","SizeOfNode":5.84,"WeightOfNode":"14"}]},{"name":"ciprofloxacin","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":13.96,"WeightOfNode":"80"},{"name":"R","fill":"#8405A7FF","SizeOfNode":10.59,"WeightOfNode":"46"},{"name":"I","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"co_trimoxazole","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":13.52,"WeightOfNode":"75"},{"name":"R","fill":"#5C01A6FF","SizeOfNode":11.26,"WeightOfNode":"52"},{"name":"NA","fill":"#F3F027FF","SizeOfNode":1.56,"WeightOfNode":"1"}]},{"name":"colistin","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"NA","fill":"#0D0887FF","SizeOfNode":13.61,"WeightOfNode":"76"},{"name":"S","fill":"#7C02A8FF","SizeOfNode":10.7,"WeightOfNode":"47"},{"name":"I","fill":"#FBD524FF","SizeOfNode":3.49,"WeightOfNode":"5"}]},{"name":"doripenem","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"NA","fill":"#0D0887FF","SizeOfNode":17.52,"WeightOfNode":"126"},{"name":"R","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"ertapenem","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":16.3,"WeightOfNode":"109"},{"name":"NA","fill":"#F9963FFF","SizeOfNode":6.05,"WeightOfNode":"15"},{"name":"R","fill":"#F9DE25FF","SizeOfNode":3.12,"WeightOfNode":"4"}]},{"name":"imipenem","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":17.38,"WeightOfNode":"124"},{"name":"R","fill":"#F9DE25FF","SizeOfNode":3.12,"WeightOfNode":"4"}]},{"name":"levofloxacin","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":14.22,"WeightOfNode":"83"},{"name":"R","fill":"#A11A9CFF","SizeOfNode":10,"WeightOfNode":"41"},{"name":"NA","fill":"#F9DE25FF","SizeOfNode":3.12,"WeightOfNode":"4"}]},{"name":"meropenem","fill":"#F9963FFF","SizeOfNode":17.66,"WeightOfNode":"128","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":17.24,"WeightOfNode":"122"},{"name":"R","fill":"#FBD524FF","SizeOfNode":3.49,"WeightOfNode":"5"},{"name":"I","fill":"#F3F027FF","SizeOfNode":1.56,"WeightOfNode":"1"}]},{"name":"cefoxitin","fill":"#FDC527FF","SizeOfNode":12.09,"WeightOfNode":"60","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":8.970000000000001,"WeightOfNode":"33"},{"name":"S","fill":"#3A049AFF","SizeOfNode":8.109999999999999,"WeightOfNode":"27"}]},{"name":"oxacillin","fill":"#FDC527FF","SizeOfNode":12.09,"WeightOfNode":"60","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":8.970000000000001,"WeightOfNode":"33"},{"name":"S","fill":"#3A049AFF","SizeOfNode":8.109999999999999,"WeightOfNode":"27"}]}]},{"name":"Escherichia coli","fill":"#920FA3FF","SizeOfNode":35.7,"WeightOfNode":"523","children":[{"name":"ampicillin","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":15.69,"WeightOfNode":"101"},{"name":"S","fill":"#E3685FFF","SizeOfNode":7.65,"WeightOfNode":"24"}]},{"name":"cefepime","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":12.49,"WeightOfNode":"64"},{"name":"S","fill":"#270591FF","SizeOfNode":11.99,"WeightOfNode":"59"},{"name":"I","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"cefotaxime","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"R","fill":"#6C00A8FF","SizeOfNode":10.93,"WeightOfNode":"49"},{"name":"NA","fill":"#8B0AA5FF","SizeOfNode":10.35,"WeightOfNode":"44"},{"name":"S","fill":"#C43E7FFF","SizeOfNode":8.83,"WeightOfNode":"32"}]},{"name":"ceftazidime","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":13.61,"WeightOfNode":"76"},{"name":"S","fill":"#7401A8FF","SizeOfNode":10.7,"WeightOfNode":"47"},{"name":"I","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"ceftriaxone","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"R","fill":"#0D0887FF","SizeOfNode":13.15,"WeightOfNode":"71"},{"name":"S","fill":"#920FA3FF","SizeOfNode":10.12,"WeightOfNode":"42"},{"name":"NA","fill":"#FCA537FF","SizeOfNode":5.41,"WeightOfNode":"12"}]},{"name":"ciprofloxacin","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":12.49,"WeightOfNode":"64"},{"name":"R","fill":"#0D0887FF","SizeOfNode":12.19,"WeightOfNode":"61"}]},{"name":"co_trimoxazole","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":13.52,"WeightOfNode":"75"},{"name":"R","fill":"#6400A7FF","SizeOfNode":11.04,"WeightOfNode":"50"}]},{"name":"colistin","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"NA","fill":"#0D0887FF","SizeOfNode":12.39,"WeightOfNode":"63"},{"name":"S","fill":"#300597FF","SizeOfNode":11.79,"WeightOfNode":"57"},{"name":"I","fill":"#FBD524FF","SizeOfNode":3.49,"WeightOfNode":"5"}]},{"name":"doripenem","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"NA","fill":"#0D0887FF","SizeOfNode":17.03,"WeightOfNode":"119"},{"name":"R","fill":"#FCCD25FF","SizeOfNode":3.82,"WeightOfNode":"6"}]},{"name":"ertapenem","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":16.3,"WeightOfNode":"109"},{"name":"NA","fill":"#FEBC2AFF","SizeOfNode":4.68,"WeightOfNode":"9"},{"name":"R","fill":"#FDC527FF","SizeOfNode":4.13,"WeightOfNode":"7"}]},{"name":"imipenem","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":17.17,"WeightOfNode":"121"},{"name":"R","fill":"#F9DE25FF","SizeOfNode":3.12,"WeightOfNode":"4"}]},{"name":"levofloxacin","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":12.59,"WeightOfNode":"65"},{"name":"R","fill":"#300597FF","SizeOfNode":11.89,"WeightOfNode":"58"},{"name":"NA","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"meropenem","fill":"#CD4A76FF","SizeOfNode":17.45,"WeightOfNode":"125","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":17.03,"WeightOfNode":"119"},{"name":"R","fill":"#F9DE25FF","SizeOfNode":3.12,"WeightOfNode":"4"},{"name":"I","fill":"#F6E726FF","SizeOfNode":2.21,"WeightOfNode":"2"}]},{"name":"cefoxitin","fill":"#FBD524FF","SizeOfNode":7.15,"WeightOfNode":"21","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":5.41,"WeightOfNode":"12"},{"name":"R","fill":"#4B03A1FF","SizeOfNode":4.68,"WeightOfNode":"9"}]},{"name":"oxacillin","fill":"#FBD524FF","SizeOfNode":7.15,"WeightOfNode":"21","children":[{"name":"S","fill":"#0D0887FF","SizeOfNode":5.41,"WeightOfNode":"12"},{"name":"R","fill":"#4B03A1FF","SizeOfNode":4.68,"WeightOfNode":"9"}]}]}]},"options":{"hierarchy":["pathogen_name","antibiotic","resistance"],"input":null,"attribute":"n","linkLength":null,"fontSize":10,"tooltip":true,"collapsed":true,"zoomable":true,"margin":{"top":20,"bottom":20,"left":111.64,"right":35}}},"evals":[],"jsHooks":[]}</script>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-amr-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Decomposition tree of AMR samples by pathogen , antibiotic and resistance status
+</figcaption>
+</figure>
+</div>
+</div>
+<!-- -->
+
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb16" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "AMR"</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span><span class="co"> </span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">    html:</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">       toc: true</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">       toc-location: right</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">       code-fold: true</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">       code-tools: true</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span><span class="co"> </span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## </span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: setup</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: false</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="fu">needs</span>(tidyverse, data.table, googledrive, readxl, skimr, janitor, gt, gtsummary, collapsibleTree)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>dir <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"~/spha/data/fwdatastrategypocpublichealthframeworkindicators"</span>)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>dir</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Metadata</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: metadata</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a><span class="fu">excel_sheets</span>(<span class="fu">paste0</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"</span>))</span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="fu">paste0</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Saudi PHA Deliverables Tracker_v0.5_25June2024.xlsx"</span>))</span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### AMR</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-51"><a href="#cb16-51" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Descriptives</span></span>
+<span id="cb16-52"><a href="#cb16-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-55"><a href="#cb16-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-56"><a href="#cb16-56" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tobacco</span></span>
+<span id="cb16-57"><a href="#cb16-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-58"><a href="#cb16-58" aria-hidden="true" tabindex="-1"></a>amr <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/AMR 2022 POC.xlsx"</span>) <span class="sc">|&gt;</span> janitor<span class="sc">::</span><span class="fu">clean_names</span>() <span class="sc">|&gt;</span> <span class="fu">setDT</span>()</span>
+<span id="cb16-59"><a href="#cb16-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-60"><a href="#cb16-60" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(amr)</span>
+<span id="cb16-61"><a href="#cb16-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-62"><a href="#cb16-62" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-63"><a href="#cb16-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-66"><a href="#cb16-66" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-67"><a href="#cb16-67" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pathogens</span></span>
+<span id="cb16-68"><a href="#cb16-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-69"><a href="#cb16-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-70"><a href="#cb16-70" aria-hidden="true" tabindex="-1"></a>amr[, .N, by <span class="ot">=</span> .(pathogen_name)]</span>
+<span id="cb16-71"><a href="#cb16-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-72"><a href="#cb16-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-73"><a href="#cb16-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-74"><a href="#cb16-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-75"><a href="#cb16-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-76"><a href="#cb16-76" aria-hidden="true" tabindex="-1"></a><span class="fu">##### Data cleaning</span></span>
+<span id="cb16-77"><a href="#cb16-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-78"><a href="#cb16-78" aria-hidden="true" tabindex="-1"></a>Resistance variables have different formats - make longer - check missingness</span>
+<span id="cb16-79"><a href="#cb16-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-82"><a href="#cb16-82" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-83"><a href="#cb16-83" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: long resistance and convert logical to character</span></span>
+<span id="cb16-84"><a href="#cb16-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-85"><a href="#cb16-85" aria-hidden="true" tabindex="-1"></a><span class="do">## drop hashed variables</span></span>
+<span id="cb16-86"><a href="#cb16-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-87"><a href="#cb16-87" aria-hidden="true" tabindex="-1"></a>amr <span class="ot">&lt;-</span> amr <span class="sc">|&gt;</span></span>
+<span id="cb16-88"><a href="#cb16-88" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span><span class="fu">contains</span>(<span class="st">"sample"</span>), <span class="sc">-</span>first_name, <span class="sc">-</span>second_name, <span class="sc">-</span>family_name, <span class="sc">-</span>patient_mrn, <span class="sc">-</span>national_iqama_id, <span class="sc">-</span>nationality) <span class="sc">|&gt;</span></span>
+<span id="cb16-89"><a href="#cb16-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_if</span>(is.logical, as.character)</span>
+<span id="cb16-90"><a href="#cb16-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-91"><a href="#cb16-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-92"><a href="#cb16-92" aria-hidden="true" tabindex="-1"></a>amr <span class="sc">|&gt;</span></span>
+<span id="cb16-93"><a href="#cb16-93" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate_all</span>(\(x) <span class="fu">mean</span>(<span class="fu">is.na</span>(x))) <span class="sc">|&gt;</span></span>
+<span id="cb16-94"><a href="#cb16-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>()</span>
+<span id="cb16-95"><a href="#cb16-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-96"><a href="#cb16-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-97"><a href="#cb16-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-98"><a href="#cb16-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-99"><a href="#cb16-99" aria-hidden="true" tabindex="-1"></a>Remove completely missing</span>
+<span id="cb16-100"><a href="#cb16-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-103"><a href="#cb16-103" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-104"><a href="#cb16-104" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: impute and remove</span></span>
+<span id="cb16-105"><a href="#cb16-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-106"><a href="#cb16-106" aria-hidden="true" tabindex="-1"></a>amr_no_empty <span class="ot">&lt;-</span> <span class="fu">remove_empty</span>(amr)</span>
+<span id="cb16-107"><a href="#cb16-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-108"><a href="#cb16-108" aria-hidden="true" tabindex="-1"></a>amr_longer <span class="ot">&lt;-</span> amr_no_empty <span class="sc">|&gt;</span></span>
+<span id="cb16-109"><a href="#cb16-109" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="at">names_to =</span> <span class="st">"antibiotic"</span>, <span class="at">values_to =</span> <span class="st">"resistance"</span>, <span class="at">cols =</span> ampicillin<span class="sc">:</span>colistin)</span>
+<span id="cb16-110"><a href="#cb16-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-111"><a href="#cb16-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-112"><a href="#cb16-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-113"><a href="#cb16-113" aria-hidden="true" tabindex="-1"></a>xtabs - three way contingency table on antibiotic, resistance and organism, test with Mantel-Haenszel Chi-Sq test.</span>
+<span id="cb16-114"><a href="#cb16-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-117"><a href="#cb16-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-118"><a href="#cb16-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: cross tabs</span></span>
+<span id="cb16-119"><a href="#cb16-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-120"><a href="#cb16-120" aria-hidden="true" tabindex="-1"></a>amr_freq <span class="ot">&lt;-</span> amr_longer <span class="sc">|&gt;</span> <span class="fu">count</span>(pathogen_name, antibiotic, resistance) </span>
+<span id="cb16-121"><a href="#cb16-121" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-122"><a href="#cb16-122" aria-hidden="true" tabindex="-1"></a>three_way_table <span class="ot">&lt;-</span> <span class="fu">xtabs</span>(n <span class="sc">~</span> antibiotic <span class="sc">+</span> resistance <span class="sc">+</span> pathogen_name, <span class="at">data =</span> amr_freq)</span>
+<span id="cb16-123"><a href="#cb16-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-124"><a href="#cb16-124" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(<span class="fu">mantelhaen.test</span>(three_way_table))</span>
+<span id="cb16-125"><a href="#cb16-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-126"><a href="#cb16-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-127"><a href="#cb16-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-128"><a href="#cb16-128" aria-hidden="true" tabindex="-1"></a><span class="fu">### Smoking</span></span>
+<span id="cb16-129"><a href="#cb16-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-132"><a href="#cb16-132" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-133"><a href="#cb16-133" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: smoking</span></span>
+<span id="cb16-134"><a href="#cb16-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-135"><a href="#cb16-135" aria-hidden="true" tabindex="-1"></a>smoking <span class="ot">&lt;-</span>  <span class="fu">fread</span>(<span class="st">"/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Smoking 2022.csv"</span>)</span>
+<span id="cb16-136"><a href="#cb16-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-137"><a href="#cb16-137" aria-hidden="true" tabindex="-1"></a>smoking <span class="sc">|&gt;</span></span>
+<span id="cb16-138"><a href="#cb16-138" aria-hidden="true" tabindex="-1"></a>    <span class="fu">skim</span>()</span>
+<span id="cb16-139"><a href="#cb16-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-140"><a href="#cb16-140" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-141"><a href="#cb16-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-144"><a href="#cb16-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-smok-rate</span></span>
+<span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Gender specific attendance rates for smokers</span></span>
+<span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-149"><a href="#cb16-149" aria-hidden="true" tabindex="-1"></a><span class="do">## create five year age bands</span></span>
+<span id="cb16-150"><a href="#cb16-150" aria-hidden="true" tabindex="-1"></a>smoking <span class="ot">&lt;-</span> smoking[, age_band <span class="sc">:</span><span class="er">=</span> <span class="fu">cut</span>(age, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">5</span>), <span class="at">right =</span> <span class="cn">FALSE</span>)][] </span>
+<span id="cb16-151"><a href="#cb16-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-152"><a href="#cb16-152" aria-hidden="true" tabindex="-1"></a><span class="do">## get KSA population in 5 year age-bands 2018 NB terminal age band is 80+</span></span>
+<span id="cb16-153"><a href="#cb16-153" aria-hidden="true" tabindex="-1"></a>as_pop <span class="ot">&lt;-</span> curl<span class="sc">::</span><span class="fu">curl_download</span>(<span class="st">"https://www.stats.gov.sa/sites/default/files/population_2018.xlsx"</span>, <span class="at">destfile =</span> <span class="fu">tempfile</span>()) </span>
+<span id="cb16-154"><a href="#cb16-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-155"><a href="#cb16-155" aria-hidden="true" tabindex="-1"></a>as_pops <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(as_pop, <span class="at">skip =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-156"><a href="#cb16-156" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="dv">1</span>, <span class="dv">8</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-157"><a href="#cb16-157" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">age_band =</span> <span class="dv">1</span>, <span class="at">male =</span> <span class="dv">2</span>, <span class="at">female =</span> <span class="dv">3</span>)</span>
+<span id="cb16-158"><a href="#cb16-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-159"><a href="#cb16-159" aria-hidden="true" tabindex="-1"></a>as_pops <span class="ot">&lt;-</span> as_pops <span class="sc">|&gt;</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">17</span>)</span>
+<span id="cb16-160"><a href="#cb16-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-161"><a href="#cb16-161" aria-hidden="true" tabindex="-1"></a><span class="do">## frequency national counts by age and sex, and collapse terminal age bands</span></span>
+<span id="cb16-162"><a href="#cb16-162" aria-hidden="true" tabindex="-1"></a>as_smok <span class="ot">&lt;-</span> smoking[, .N, by <span class="ot">=</span> .(age_band, patient_gender)] <span class="sc">|&gt;</span></span>
+<span id="cb16-163"><a href="#cb16-163" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> patient_gender, <span class="at">values_from =</span> N)</span>
+<span id="cb16-164"><a href="#cb16-164" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-165"><a href="#cb16-165" aria-hidden="true" tabindex="-1"></a>as_smok_80 <span class="ot">&lt;-</span> as_smok <span class="sc">|&gt;</span></span>
+<span id="cb16-166"><a href="#cb16-166" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">rowid =</span> <span class="fu">row_number</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb16-167"><a href="#cb16-167" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb16-168"><a href="#cb16-168" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_row</span>(<span class="fu">data.frame</span>(<span class="at">age_band =</span> <span class="st">"80+"</span>, <span class="at">male =</span> <span class="dv">90</span>, <span class="at">female =</span> <span class="dv">11</span>, <span class="at">unknown =</span> <span class="dv">0</span>, <span class="at">rowid =</span> <span class="dv">17</span>))</span>
+<span id="cb16-169"><a href="#cb16-169" aria-hidden="true" tabindex="-1"></a>    <span class="co"># keep(is.numeric) |&gt;</span></span>
+<span id="cb16-170"><a href="#cb16-170" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  map_dbl(\(x) sum(tail(x, 5), na.rm = TRUE))</span></span>
+<span id="cb16-171"><a href="#cb16-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-172"><a href="#cb16-172" aria-hidden="true" tabindex="-1"></a>as_smok_rates <span class="ot">&lt;-</span> as_smok_80 <span class="sc">|&gt;</span> <span class="fu">bind_cols</span>(as_pops) <span class="sc">|&gt;</span></span>
+<span id="cb16-173"><a href="#cb16-173" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">male_rate =</span> male...<span class="dv">2</span> <span class="sc">/</span> male...<span class="dv">7</span> <span class="sc">*</span> <span class="dv">100000</span>, </span>
+<span id="cb16-174"><a href="#cb16-174" aria-hidden="true" tabindex="-1"></a>           <span class="at">female_rate =</span> female...<span class="dv">3</span> <span class="sc">/</span> female...<span class="dv">8</span> <span class="sc">*</span> <span class="dv">100000</span>)</span>
+<span id="cb16-175"><a href="#cb16-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-176"><a href="#cb16-176" aria-hidden="true" tabindex="-1"></a>as_smok_rates <span class="sc">|&gt;</span></span>
+<span id="cb16-177"><a href="#cb16-177" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-178"><a href="#cb16-178" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(age_band...<span class="dv">1</span>, male_rate), <span class="at">fill =</span> <span class="st">"goldenrod"</span>) <span class="sc">+</span></span>
+<span id="cb16-179"><a href="#cb16-179" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="fu">aes</span>(age_band...<span class="dv">1</span>, female_rate), <span class="at">fill =</span> <span class="st">"red"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>)</span>
+<span id="cb16-180"><a href="#cb16-180" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-181"><a href="#cb16-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-182"><a href="#cb16-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-183"><a href="#cb16-183" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interactive EDA</span></span>
+<span id="cb16-184"><a href="#cb16-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-187"><a href="#cb16-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-188"><a href="#cb16-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-smok</span></span>
+<span id="cb16-189"><a href="#cb16-189" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Decomposition tree of smoking data by directorate, appointment type, age band and gender</span></span>
+<span id="cb16-190"><a href="#cb16-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-191"><a href="#cb16-191" aria-hidden="true" tabindex="-1"></a><span class="do">## frequency </span></span>
+<span id="cb16-192"><a href="#cb16-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-193"><a href="#cb16-193" aria-hidden="true" tabindex="-1"></a>smoking_counts <span class="ot">&lt;-</span> smoking[, .N, by <span class="ot">=</span> .(directorate_name, appt_type, patient_gender, age_band)][,node <span class="sc">:</span><span class="er">=</span> <span class="fu">log</span>(N)]</span>
+<span id="cb16-194"><a href="#cb16-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-195"><a href="#cb16-195" aria-hidden="true" tabindex="-1"></a><span class="fu">collapsibleTreeSummary</span>(smoking_counts, </span>
+<span id="cb16-196"><a href="#cb16-196" aria-hidden="true" tabindex="-1"></a>                       <span class="at">inputId =</span> <span class="cn">NULL</span>, </span>
+<span id="cb16-197"><a href="#cb16-197" aria-hidden="true" tabindex="-1"></a>                       <span class="at">root =</span> <span class="st">"smokers"</span>, </span>
+<span id="cb16-198"><a href="#cb16-198" aria-hidden="true" tabindex="-1"></a>                       <span class="at">hierarchy =</span> <span class="fu">c</span>(<span class="st">"directorate_name"</span>, <span class="st">"appt_type"</span>, <span class="st">"age_band"</span>, <span class="st">"patient_gender"</span>), </span>
+<span id="cb16-199"><a href="#cb16-199" aria-hidden="true" tabindex="-1"></a>                       <span class="at">attribute =</span> <span class="st">"N"</span>,</span>
+<span id="cb16-200"><a href="#cb16-200" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fillFun =</span> viridis<span class="sc">::</span>plasma, </span>
+<span id="cb16-201"><a href="#cb16-201" aria-hidden="true" tabindex="-1"></a>                       <span class="at">maxPercent =</span> <span class="dv">50</span>)</span>
+<span id="cb16-202"><a href="#cb16-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-203"><a href="#cb16-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb16-204"><a href="#cb16-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-207"><a href="#cb16-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb16-208"><a href="#cb16-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-amr</span></span>
+<span id="cb16-209"><a href="#cb16-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Decomposition tree of AMR samples by pathogen , antibiotic and resistance status</span></span>
+<span id="cb16-210"><a href="#cb16-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-211"><a href="#cb16-211" aria-hidden="true" tabindex="-1"></a><span class="fu">collapsibleTreeSummary</span>(amr_freq, </span>
+<span id="cb16-212"><a href="#cb16-212" aria-hidden="true" tabindex="-1"></a>                       <span class="at">inputId =</span> <span class="cn">NULL</span>, </span>
+<span id="cb16-213"><a href="#cb16-213" aria-hidden="true" tabindex="-1"></a>                       <span class="at">root =</span> <span class="st">"samples"</span>, </span>
+<span id="cb16-214"><a href="#cb16-214" aria-hidden="true" tabindex="-1"></a>                       <span class="at">hierarchy =</span> <span class="fu">c</span>(<span class="st">"pathogen_name"</span>, <span class="st">"antibiotic"</span>, <span class="st">"resistance"</span>), </span>
+<span id="cb16-215"><a href="#cb16-215" aria-hidden="true" tabindex="-1"></a>                       <span class="at">attribute =</span> <span class="st">"n"</span>,</span>
+<span id="cb16-216"><a href="#cb16-216" aria-hidden="true" tabindex="-1"></a>                       <span class="at">nodeSize =</span> <span class="st">"n"</span>, </span>
+<span id="cb16-217"><a href="#cb16-217" aria-hidden="true" tabindex="-1"></a>                       <span class="at">fillFun =</span> viridis<span class="sc">::</span>plasma, </span>
+<span id="cb16-218"><a href="#cb16-218" aria-hidden="true" tabindex="-1"></a>                       <span class="at">maxPercent =</span> <span class="dv">50</span>)</span>
+<span id="cb16-219"><a href="#cb16-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-220"><a href="#cb16-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-221"><a href="#cb16-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-222"><a href="#cb16-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-223"><a href="#cb16-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -19,7 +19,7 @@ theme_set(ggthemes::theme_economist())
 
 dir <- here::here("~/spha/data/fwdatastrategypocpublichealthframeworkindicators")
 
-smoking <-  fread(paste0(dir, "/Smoking 2022.csv"))
+smoking <-  fread("/Users/julianflowers/spha-1/data/fwdatastrategypocpublichealthframeworkindicators/Smoking 2022.csv")
 
 
 ```
@@ -58,9 +58,9 @@ tmpd <- tempdir()
 
 sa_shp_1 <- curl_download("https://data.humdata.org/dataset/41ce9023-1d21-4549-a485-94316200aba0/resource/99834c81-ad34-415e-91c5-af053d8e55b4/download/sau_capp_adm1_1m_ocha.zip", destfile = tempfile())
 
-sa_pop_d <- curl_download("https://data.humdata.org/dataset/14b288ca-1855-4025-9f01-41cba548e6f6/resource/44baa2f6-b6d8-4018-b9c6-fd81b493ec22/download/sau_general_2020_geotiff.zip", destfile = tempfile())
+#sa_pop_d <- curl_download("https://data.humdata.org/dataset/14b288ca-1855-4025-9f01-41cba548e6f6/resource/44baa2f6-b6d8-4018-b9c6-fd81b493ec22/download/sau_general_2020_geotiff.zip", destfile = tempfile())
 
-sa_shp <- unzip(sa_shp, exdir = tmpd)
+sa_shp <- unzip(sa_shp_l, exdir = tmpd)
 
 sa_shp_1 <- unzip(sa_shp_1, exdir = tmpd)
 
